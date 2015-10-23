@@ -466,9 +466,71 @@ def expected_offspring(AA_AA, AA_Aa, AA_aa, Aa_Aa, Aa_aa, aa_aa):
 
 	return EX
 
+def motif(fatsa_file):
+
+	"""
+	Returns the longest common substring of the genetic strings
+	contained in fatsa_file.
+	"""
+
+	data = fatsa_read(fatsa_file)
+	data = [i[1] for i in data]
+	longest = ''
+
+	for i in range(len(data)):
+		a = data[i]
+		lngst = ''
+		for c in range(len(a)-1):
+			testlen = max(2, len(longest))
+			while testlen <= len(a) - c:
+				teststr = a[c:c+testlen]
+				common = True
+				for j in data:
+					if teststr in j:
+						continue
+					else:
+						common = False
+				if common:
+					if len(teststr) > len(lngst):	
+						lngst = teststr
+					testlen += 1
+				else:
+					break
+		if len(lngst) > len(longest):
+			longest = lngst
+	with open("output_" + fatsa_file, 'w') as fout:
+		fout.write(longest)
+	return longest	
 
 
+def choose(n, k):
 
+	return fact(n)/(fact(k)*fact(n-k))
+
+	
+def ind_alleles(k, n):
+
+	"""
+	Given: A population starts at generation 0 with 
+		   1 organism of genotype AaBb. This organism and 
+		   all offspring mate with type AaBb, and have two 
+		   offspring.
+	Returns: The probability that n organisms of genotype
+			 AaBb will belong to the k_th generation. 
+	"""
+
+	tot = 2**k
+	prb = 0
+	for i in range(n, tot+1):
+		prb += ((1/4)**i)*((3/4)**(tot-i))*choose(tot,i)
+	return prb
+
+
+def prot_motif():
+
+	"DUnno"
+
+	pass
 
 
 
