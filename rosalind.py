@@ -639,9 +639,10 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 			prots = [uniprot_get(protein_IDs)]
 		except Exception as ex:
 			print(ex)
-			raise ValueError('Invalid input type or nonexistent protein ID.')
+			raise ValueError('Invalid input type or nonexistent',
+							 'protein ID.')
 
-	locations = [motif_location(prot[1], motif = motif) for prot in prots]
+	locations = [motif_location(prot[1], motif=motif) for prot in prots]
 	if len(locations) != len(prots):
 		raise Exception("Something went wrong... Exiting...")
 	for i in range(len(prots)):
@@ -658,11 +659,30 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 	return results
 
 
+def num_mrna_from_prot(prot):
 
+	"""
+	prot -> Protein string
+	
+	Returns n modulo 1,000,000, where n is the number of 
+	possible mrna strings which could encode the given protein.
+	"""
 
+	prot = prot.upper()	
+	count = 1
+	inferences = [0 for i in range(len(prot))]
 
-
-
+	for i in range(len(prot)):
+		print("\ni = {}, prot[{}] == {}".format(i, i, prot[i])) 
+		for key in rna_codons.keys():
+			if rna_codons[key] == prot[i]:
+				print("\tMatches codon {}".format(key))
+				inferences[i] += 1
+		print("Total codons inferred: {}".format(inferences[i]))
+		count *= inferences[i]
+	
+	count *= 3 #Don't forget about the 3 possible stop codons
+	return count % int(1E6)
 
 
 
