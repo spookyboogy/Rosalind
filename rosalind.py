@@ -619,7 +619,7 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 		  each given protein.
 		- Returns a list of tuples corresponding to the printed output.
 		- If fout is true, output is written to an output file.
-		  If a file '<fname>.txt'' is provided, output is written to
+		  If a file '<fname>.txt' is provided, output is written to
 		  'output_<fname>.txt'; otherwise, writes to 'output_mprt.txt'.
 	Requires access to uniprot.org.
 	"""
@@ -645,8 +645,10 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 	locations = [motif_location(prot[1], motif=motif) for prot in prots]
 	if len(locations) != len(prots):
 		raise Exception("Something went wrong... Exiting...")
+	
 	for i in range(len(prots)):
 		results += [(prots[i][0], locations[i])] 
+	#results += [(prots[i][0], locations[i]) for i in range(len(prots))] 
 	results = [i for i in results if i[1] not in [[], '', None]]
 	
 	with open(fout_name, 'w') as fout:
@@ -662,13 +664,18 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 def num_mrna_from_prot(prot):
 
 	"""
-	prot -> Protein string
+	prot -> Protein string or file containing protein 
 	
 	Returns n modulo 1,000,000, where n is the number of 
 	possible mrna strings which could encode the given protein.
 	"""
 
-	prot = prot.upper()	
+	if os.path.isfile(prot):
+		f = open(prot, 'r')
+		prot = f.read().replace('\n', '').upper()
+	else:
+		prot = prot.upper()
+
 	count = 1
 	inferences = [0 for i in range(len(prot))]
 
@@ -683,6 +690,9 @@ def num_mrna_from_prot(prot):
 	
 	count *= 3 #Don't forget about the 3 possible stop codons
 	return count % int(1E6)
+
+
+
 
 
 
