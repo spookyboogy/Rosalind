@@ -43,7 +43,6 @@ def dna_to_rna(rna_string):
 			d += "U"
 		else:
 			d += nt
-
 	return d
 
 
@@ -431,14 +430,11 @@ def overlap_graph(fatsa_file):
 	for tail in data: 
 		suffix = tail[1][-k:] 
 		overlaps = []
-
 		for head in data:		
 			prefix = head[1][:k]
-
 			if suffix == prefix: 
 				if head[0] != tail[0]:
 					overlaps += [head[0]]
-
 		if len(overlaps) != 0:
 			directions[tail[0]] = overlaps
 
