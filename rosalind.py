@@ -19,11 +19,13 @@ def nucleotide_count(string):
 	dna = ['A', 'C', 'G', 'T']; rna = ['A', 'C', 'G', 'U']
 
 	if list(set(string)) == list(set(dna)):
-		return s.count("A"), s.count("C"), s.count("G"), s.count("T")
-
+		a, c = s.count("A"), s.count("C")
+		g, t = s.count("G"), s.count("T")
+		return a, c, g, t
 	elif list(set(string)) == list(set(rna)):
-		return s.count("A"), s.count("C"), s.count("G"), s.count("U")
-		
+		a, c = s.count("A"), s.count("C") 
+		g, u = s.count("G"), s.count("U")
+		return a, c, g, u
 	else:
 		raise ValueError("You must enter a DNA or RNA sequence.")
 
