@@ -528,7 +528,7 @@ def ind_alleles(k, n):
 	return prb
 
 
-def motif_in_prot(prot, motif = "N{P}[ST]{P}"):
+def motif_location(prot, motif = "N{P}[ST]{P}"):
 
 	"""
 	Takes a protein sequence and a protein sequence and
@@ -551,9 +551,8 @@ def motif_in_prot(prot, motif = "N{P}[ST]{P}"):
 		input-validity.
 		"""
 
-		motif = motif.upper()
-		m = {}
-		i = 0; char_count = 0
+		motif = motif.upper(); 
+		m = {}; i = 0; char_count = 0
 		while i < len(motif):
 			if motif[i] == '[':
 				end = i + motif[i:].index(']')
@@ -589,6 +588,84 @@ def motif_in_prot(prot, motif = "N{P}[ST]{P}"):
 		if is_motif(prot[i:i+m_len], motif):
 			locations += [i+1]
 	return locations		
+
+
+def uniprot_get(uniprot_ID):
+
+	"""
+	uniprot_ID -> (string) Protein ID on uniprot.org
+
+	Fetches the amino acid sequence of the given protein from the
+	uniprot database. Returns a string. 
+	"""
+
+	url = "http://www.uniprot.org/uniprot/{}.fasta".format(uniprot_ID)
+	data = urlopen(url).read().decode()
+
+	string = data[data.index('\n')+1:].replace('\n', '')
+
+	return (uniprot_ID, string)
+
+
+def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
+
+	"""
+	Proteins -> Takes 3 types of values:
+					- Single protein ID
+					- List of protein IDs
+					- File containing newline-separated IDs
+	Motif -> A valid protein motif string
+
+	Output:
+		- Prints the locations at which the given motif appears in
+		  each given protein.
+		- Returns a list of tuples corresponding to the printed output.
+		- If fout is true, output is written to an output file.
+		  If a file '<fname>.txt'' is provided, output is written to
+		  'output_<fname>.txt'; otherwise, writes to 'output_mprt.txt'.
+	Requires access to uniprot.org.
+	"""
+
+	results = []
+	fout_name = 'output_mprt.txt'
+
+	if os.path.isfile(protein_IDs):
+		prot_IDs = open(protein_IDs, 'r').read().split('\n')
+		prot_IDs = [prot for prot in prot_IDs if prot not in ['', ' ']]
+		prots = [uniprot_get(prot) for prot in prot_IDs]
+		fout_name = "output_{}".format(protein_IDs)
+	elif type(protein_IDs) == list:
+		prots = [uniprot_get(prot) for prot in protein_IDs]
+	else:
+		try:
+			prots = [uniprot_get(protein_IDs)]
+		except Exception as ex:
+			print(ex)
+			raise ValueError('Invalid input type or nonexistent protein ID.')
+
+	locations = [motif_location(prot[1], motif = motif) for prot in prots]
+	if len(locations) != len(prots):
+		raise Exception("Something went wrong... Exiting...")
+	for i in range(len(prots)):
+		results += [(prots[i][0], locations[i])] 
+	results = [i for i in results if i[1] not in [[], '', None]]
+	
+	with open(fout_name, 'w') as fout:
+		for tup in results:
+			print(tup[0]); fout.write("{}\n".format(tup[0]))
+			for i in tup[1]:
+				print(i, end = ' '); fout.write("{} ".format(i)) 
+			print(); fout.write('\n')
+
+	return results
+
+
+
+
+
+
+
+
 
 
 
