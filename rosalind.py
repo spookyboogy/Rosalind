@@ -2,6 +2,8 @@
 ## http://rosalind.info/problems/list-view/
 
 import os
+from math import factorial as fact
+from urllib.request import urlopen
 
 
 def nucleotide_count(string):
@@ -526,11 +528,67 @@ def ind_alleles(k, n):
 	return prb
 
 
-def prot_motif():
+def motif_in_prot(prot, motif = "N{P}[ST]{P}"):
 
-	"DUnno"
+	"""
+	Takes a protein sequence and a protein sequence and
+	returns a list of the motif's locations within the 
+	protein, if any.
+	
+	Note: A motif (at least with respect to this program)
+		  is a definite-length protein sequence. Protein
+		  units enclosed in a '[]' indicate that anyone one of 
+		  the enclosed units can appear at that point. Units
+		  enclosed in a '{}' indicate that any protein unit
+		  NOT enclosed can appear at that point.
+	"""	
 
-	pass
+	def is_motif(string, motif = motif, get_motif_len = False):
+		
+		"""
+		Returns True if string accords with motif,
+		False otherwise. Currently does not check 
+		input-validity.
+		"""
+
+		motif = motif.upper()
+		m = {}
+		i = 0; char_count = 0
+		while i < len(motif):
+			if motif[i] == '[':
+				end = i + motif[i:].index(']')
+				m[char_count] = [c for c in motif[i+1:end]]
+				i = end + 1
+			elif motif[i] == '{':
+				end = i + motif[i:].index('}')
+				m[char_count] = []
+				for c in set(rna_codons.values()):
+					if c not in motif[i+1:end]:
+						m[char_count] += [c]
+				i = end + 1
+			else:
+				m[char_count] = [motif[i]]
+				i += 1
+			char_count += 1
+
+		if get_motif_len:
+			return len(m.keys())
+		else:
+			s = string = string.upper()
+			if len(s) != len(m.keys()):
+				print("Motif and string not of equal length.") 
+				return			
+			for i in range(len(s)):
+				if s[i] not in m[i]:
+					return False
+			return True
+	
+	locations = []	
+	m_len = is_motif(None, motif, get_motif_len = True)
+	for i in range(len(prot) - m_len + 1):
+		if is_motif(prot[i:i+m_len], motif):
+			locations += [i+1]
+	return locations		
 
 
 
