@@ -30,22 +30,33 @@ def nucleotide_count(string):
 		raise ValueError("You must enter a DNA or RNA sequence.")
 
 
-def dna_to_rna(rna_string):
+def dna_to_rna(dna_string):
 
 	"""
-	Takes a sequence of RNA nucleotides and returns a transcribed
-	sequence of DNA nucleotides.
+	dna_string -> A DNA string or a file containing one.
+
+	Returns the RNA string transcribed from dna_string.
+	If a file is provided, output is written to 'output_<fname>'.
 	"""
 
-	r = rna_string = rna_string.upper()
-	d = ''
+	if os.path.isfile(dna_string):
+		f_out = True
+		d = open(dna_string, 'r').read().replace('\n', '').upper()
+	else:
+		f_out = False
+		d = dna_string = dna_string.upper()
+	r = ''
 
-	for nt in r:
+	for nt in d:
 		if nt == "T":
-			d += "U"
+			r += "U"
 		else:
-			d += nt
-	return d
+			r += nt
+	
+	if f_out:
+		with open("output_{}".format(dna_string), 'w') as fout:
+			fout.write(r)
+	return r
 
 
 def reverse_compliment(dna_string):
@@ -680,25 +691,75 @@ def num_mrna_from_prot(prot):
 	inferences = [0 for i in range(len(prot))]
 
 	for i in range(len(prot)):
-		print("\ni = {}, prot[{}] == {}".format(i, i, prot[i])) 
 		for key in rna_codons.keys():
 			if rna_codons[key] == prot[i]:
-				print("\tMatches codon {}".format(key))
 				inferences[i] += 1
-		print("Total codons inferred: {}".format(inferences[i]))
 		count *= inferences[i]
 	
-	count *= 3 #Don't forget about the 3 possible stop codons
+	count *= 3 # Don't forget about the 3 possible stop codons
 	return count % int(1E6)
 
 
+def reading_frames(dna_string):
+
+	"""
+	dna_string -> A DNA string or a file containing one.
+
+	Returns a list of two 3-tuples; the first containing the
+	5'-to-3' reading frames of dna_string, and the second containing
+	the 3'-to-5' reading frames of dna_string.
+	"""
+	
+	if os.path.isfile(dna_string):
+		f = open(dna_string, 'r').read()
+		d = f.replace('\n', '')
+	else:
+		d = dna_string.upper()	
+
+	## get the reverse compliment d_c of d
+	## get and return the reading frames for d and d_c 
 
 
+dna_codons = {
+
+	'ATG' : 'Start',
+	'TTT' : 'F',    'CTT' : 'L', 'ATT' :  'I', 'GTT' : 'V',
+	'TTC' : 'F',    'CTC' : 'L', 'ATC' :  'I', 'GTC' : 'V',
+	'TTA' : 'L',    'CTA' : 'L', 'ATA' :  'I', 'GTA' : 'V',
+	'TTG' : 'L',    'CTG' : 'L', 'ATG' :  'M', 'GTG' : 'V',
+	'TCT' : 'S',    'CCT' : 'P', 'ACT' :  'T', 'GCT' : 'A',
+	'TCC' : 'S',    'CCC' : 'P', 'ACC' :  'T', 'GCC' : 'A',
+	'TCA' : 'S',    'CCA' : 'P', 'ACA' :  'T', 'GCA' : 'A',
+	'TCG' : 'S',    'CCG' : 'P', 'ACG' :  'T', 'GCG' : 'A',
+	'TAT' : 'Y',    'CAT' : 'H', 'AAT' :  'N', 'GAT' : 'D',
+	'TAC' : 'Y',    'CAC' : 'H', 'AAC' :  'N', 'GAC' : 'D',
+	'TAA' : 'Stop', 'CAA' : 'Q', 'AAA' :  'K', 'GAA' : 'E',
+	'TAG' : 'Stop', 'CAG' : 'Q', 'AAG' :  'K', 'GAG' : 'E',
+	'TGT' : 'C'   , 'CGT' : 'R', 'AGT' :  'S', 'GGT' : 'G',
+	'TGC' : 'C'   , 'CGC' : 'R', 'AGC' :  'S', 'GGC' : 'G',
+	'TGA' : 'Stop', 'CGA' : 'R', 'AGA' :  'R', 'GGA' : 'G',
+	'TGG' : 'W'   , 'CGG' : 'R', 'AGG' :  'R', 'GGG' : 'G'}
 
 
+def dna_to_prot(dna_string):
 
+	"""
+    dna_string -> A DNA string dna_string or a file containing a
+				  DNA string
+	
+	Returns every distinct candidate protein that can be translated 
+	from the Open Reading Frames of dna_string. 
+	If a file is provided, output is written to 'output_<filename>'.
+	""" 	
 
-
+	d = dna_string = dna_string.upper()
+	
+	## get the reading frames for d
+	## read the frames into proteins into a list
+	## search for start/stop codon-pairs in each frame
+	## (ie find open reading frames)
+	## translate the open frames into proteins
+    ## return output and write output to file
 
 
 
