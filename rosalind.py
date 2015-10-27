@@ -700,14 +700,19 @@ def num_mrna_from_prot(prot):
 	return count % int(1E6)
 
 
-def reading_frames(dna_string):
+def reading_frames(dna_string, simple = True):
 
 	"""
 	dna_string -> A DNA string or a file containing one.
-
-	Returns a list of two 3-tuples; the first containing the
-	5'-to-3' reading frames of dna_string, and the second containing
-	the 3'-to-5' reading frames of dna_string.
+	
+	Returns: If simple = True: 
+				A list containing the reading 6 reading frames
+				pertaining to dna_string.
+			 If simple = False:
+				A list of two 3-tuples; the first containing the
+				5'-to-3' reading frames of dna_string, and the second 
+				containing the 3'-to-5' reading frames of dna_string
+				(or vice-versa, depending on dna_string directionality.
 	"""
 	
 	if os.path.isfile(dna_string):
@@ -716,8 +721,26 @@ def reading_frames(dna_string):
 	else:
 		d = dna_string.upper()	
 
-	## get the reverse compliment d_c of d
-	## get and return the reading frames for d and d_c 
+	reading_frames = []
+	d_c = reverse_compliment(d)
+	
+	## what happens when len(s)%3 = 0, 1 or 2? Any difference?
+	for s in [d, d_c]:
+		frames = []
+		for shift in range(3):
+			frame = ''
+			for i in range(shift, len(s), 3):
+				codon = s[i:i+3]
+				if len(codon) == 3:
+					frame += codon
+			frames += [frame]
+		if simple:
+			reading_frames += frames
+		else:
+			reading_frames += tuple(frame for frame in frames)
+	
+	return reading_frames	
+			
 
 
 dna_codons = {
@@ -741,11 +764,11 @@ dna_codons = {
 	'TGG' : 'W'   , 'CGG' : 'R', 'AGG' :  'R', 'GGG' : 'G'}
 
 
-def dna_to_prot(dna_string):
+def dna_to_prots(dna_string):
 
 	"""
     dna_string -> A DNA string dna_string or a file containing a
-				  DNA string
+				  DNA string.
 	
 	Returns every distinct candidate protein that can be translated 
 	from the Open Reading Frames of dna_string. 
