@@ -6,6 +6,7 @@ from math import factorial as fact
 from urllib.request import urlopen
 
 rna_codons = {
+	#'AUG' : 'Start',
 	'UUU' : 'F',    'CUU' : 'L', 'AUU' : 'I', 'GUU' : 'V',
 	'UUC' : 'F',    'CUC' : 'L', 'AUC' : 'I', 'GUC' : 'V',
 	'UUA' : 'L',    'CUA' : 'L', 'AUA' : 'I', 'GUA' : 'V',
@@ -24,7 +25,7 @@ rna_codons = {
 	'UGG' : 'W'   , 'CGG' : 'R', 'AGG' : 'R', 'GGG' : 'G'}
 
 dna_codons = {
-	'ATG' : 'Start',
+    #'ATG' : 'Start',
 	'TTT' : 'F',    'CTT' : 'L', 'ATT' : 'I', 'GTT' : 'V',
 	'TTC' : 'F',    'CTC' : 'L', 'ATC' : 'I', 'GTC' : 'V',
 	'TTA' : 'L',    'CTA' : 'L', 'ATA' : 'I', 'GTA' : 'V',
@@ -118,6 +119,8 @@ def fatsa_read(fatsa_file, names = True):
 	Takes a file in FATSA format and returns list of
 	(ID, genetic_string) tuples.
 	"""
+
+	#names option not implemented yet
 	
 	f = fatsa_file
 	if not os.path.isfile(f):
@@ -402,7 +405,7 @@ def dna_to_prot(dna_string):
 	pass
 
 
-def subs(string, substring):
+def subs(string, substring, zero_based = True):
 
 	"""
 	Returns the starting positions of substring in string.
@@ -415,11 +418,11 @@ def subs(string, substring):
 
 	for i in range(len(s) - len(ss) + 1):
 		if s[i : i + len(ss)] == ss:
-			indexes += [i+1]
+			if zero_based:
+				indexes += [i]
+			else:
+				indexes += [i+1]
 
-	for i in indexes: 
-		print(i, end = ' ')
-	print()
 	return indexes 
 
 
@@ -815,8 +818,7 @@ def dna_to_proteins(dna_string):
 	""" 	
 
 	if os.path.isfile(dna_string):
-		f = open(dna_string, 'r').read()
-		d = f.replace('\n', '').upper()
+		d = fatsa_read(dna_string)[0][1]
 		f_out = True
 	else:
 		d = dna_string = dna_string.upper()
@@ -825,13 +827,43 @@ def dna_to_proteins(dna_string):
 	d_frames = reading_frames(d)
 	proteins = []
 
-	for frame in range(len(d_frames)):
+	for frame in d_frames:
+
+		starts = [i for i in subs(frame, "ATG") if (i+3)%3 == 0]
+		if len(starts) == 0:
+			continue
+
+		for start in starts:
+			s = frame[start:]
+			prot = ''
+			stop_found = False
+			for i in range(0, len(s), 3):
+				if dna_codons[s[i:i+3]] == 'Stop':
+					stop_found = True
+					break
+				prot += dna_codons[s[i:i+3]]
+			if prot and stop_found:
+				proteins += [prot]
+	
+	proteins = list(set(proteins))
+
+	if f_out:
+		with open('output_{}'.format(dna_string), 'w') as fout:
+			for prot in proteins:
+				fout.write("{}\n".format(prot))
+	
+	return proteins	
 
 
-	## search for start/stop codon-pairs in each frame
-	## (ie find open reading frames)
-	## translate the open frames into proteins
-    ## return output and write output to file
+def permutations(n):
 
+	"""
+	n -> Positive integer
+
+	Returns the total number of permuations of length n, followed
+	by a list of all such permuations.
+	"""
+
+	pass
 
 
