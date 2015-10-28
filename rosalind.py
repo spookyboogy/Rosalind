@@ -5,6 +5,43 @@ import os
 from math import factorial as fact
 from urllib.request import urlopen
 
+rna_codons = {
+	'UUU' : 'F',    'CUU' : 'L', 'AUU' : 'I', 'GUU' : 'V',
+	'UUC' : 'F',    'CUC' : 'L', 'AUC' : 'I', 'GUC' : 'V',
+	'UUA' : 'L',    'CUA' : 'L', 'AUA' : 'I', 'GUA' : 'V',
+	'UUG' : 'L',    'CUG' : 'L', 'AUG' : 'M', 'GUG' : 'V',
+	'UCU' : 'S',    'CCU' : 'P', 'ACU' : 'T', 'GCU' : 'A',
+	'UCC' : 'S',    'CCC' : 'P', 'ACC' : 'T', 'GCC' : 'A',
+	'UCA' : 'S',    'CCA' : 'P', 'ACA' : 'T', 'GCA' : 'A',
+	'UCG' : 'S',    'CCG' : 'P', 'ACG' : 'T', 'GCG' : 'A',
+	'UAU' : 'Y',    'CAU' : 'H', 'AAU' : 'N', 'GAU' : 'D',
+	'UAC' : 'Y',    'CAC' : 'H', 'AAC' : 'N', 'GAC' : 'D',
+	'UAA' : 'Stop', 'CAA' : 'Q', 'AAA' : 'K', 'GAA' : 'E',
+	'UAG' : 'Stop', 'CAG' : 'Q', 'AAG' : 'K', 'GAG' : 'E',
+	'UGU' : 'C'   , 'CGU' : 'R', 'AGU' : 'S', 'GGU' : 'G',
+	'UGC' : 'C'   , 'CGC' : 'R', 'AGC' : 'S', 'GGC' : 'G',
+	'UGA' : 'Stop', 'CGA' : 'R', 'AGA' : 'R', 'GGA' : 'G',
+	'UGG' : 'W'   , 'CGG' : 'R', 'AGG' : 'R', 'GGG' : 'G'}
+
+dna_codons = {
+	'ATG' : 'Start',
+	'TTT' : 'F',    'CTT' : 'L', 'ATT' : 'I', 'GTT' : 'V',
+	'TTC' : 'F',    'CTC' : 'L', 'ATC' : 'I', 'GTC' : 'V',
+	'TTA' : 'L',    'CTA' : 'L', 'ATA' : 'I', 'GTA' : 'V',
+	'TTG' : 'L',    'CTG' : 'L', 'ATG' : 'M', 'GTG' : 'V',
+	'TCT' : 'S',    'CCT' : 'P', 'ACT' : 'T', 'GCT' : 'A',
+	'TCC' : 'S',    'CCC' : 'P', 'ACC' : 'T', 'GCC' : 'A',
+	'TCA' : 'S',    'CCA' : 'P', 'ACA' : 'T', 'GCA' : 'A',
+	'TCG' : 'S',    'CCG' : 'P', 'ACG' : 'T', 'GCG' : 'A',
+	'TAT' : 'Y',    'CAT' : 'H', 'AAT' : 'N', 'GAT' : 'D',
+	'TAC' : 'Y',    'CAC' : 'H', 'AAC' : 'N', 'GAC' : 'D',
+	'TAA' : 'Stop', 'CAA' : 'Q', 'AAA' : 'K', 'GAA' : 'E',
+	'TAG' : 'Stop', 'CAG' : 'Q', 'AAG' : 'K', 'GAG' : 'E',
+	'TGT' : 'C'   , 'CGT' : 'R', 'AGT' : 'S', 'GGT' : 'G',
+	'TGC' : 'C'   , 'CGC' : 'R', 'AGC' : 'S', 'GGC' : 'G',
+	'TGA' : 'Stop', 'CGA' : 'R', 'AGA' : 'R', 'GGA' : 'G',
+	'TGG' : 'W'   , 'CGG' : 'R', 'AGG' : 'R', 'GGG' : 'G'}
+
 
 def nucleotide_count(string):
 
@@ -300,26 +337,6 @@ def dominance_prb(k, m, n):
 	return 1 - (prb_nodom_mm + 2*(prb_nodom_mn) + prb_nodom_nn)
 
 
-rna_codons = {
-
-	'UUU':'F'   , 'CUU':'L', 'AUU':'I', 'GUU':'V',
-	'UUC':'F'   , 'CUC':'L', 'AUC':'I', 'GUC':'V',
-	'UUA':'L'   , 'CUA':'L', 'AUA':'I', 'GUA':'V',
-	'UUG':'L'   , 'CUG':'L', 'AUG':'M', 'GUG':'V',
-	'UCU':'S'   , 'CCU':'P', 'ACU':'T', 'GCU':'A',
-	'UCC':'S'   , 'CCC':'P', 'ACC':'T', 'GCC':'A',
-	'UCA':'S'   , 'CCA':'P', 'ACA':'T', 'GCA':'A',
-	'UCG':'S'   , 'CCG':'P', 'ACG':'T', 'GCG':'A',
-	'UAU':'Y'   , 'CAU':'H', 'AAU':'N', 'GAU':'D',
-	'UAC':'Y'   , 'CAC':'H', 'AAC':'N', 'GAC':'D',
-	'UAA':'Stop', 'CAA':'Q', 'AAA':'K', 'GAA':'E',
-	'UAG':'Stop', 'CAG':'Q', 'AAG':'K', 'GAG':'E',
-	'UGU':'C'   , 'CGU':'R', 'AGU':'S', 'GGU':'G',
-	'UGC':'C'   , 'CGC':'R', 'AGC':'S', 'GGC':'G',
-	'UGA':'Stop', 'CGA':'R', 'AGA':'R', 'GGA':'G',
-	'UGG':'W'   , 'CGG':'R', 'AGG':'R', 'GGG':'G'}
-
-
 def rna_to_prot(rna_string):
 	
 	"""
@@ -341,6 +358,50 @@ def rna_to_prot(rna_string):
 	return p
 
 
+def dna_to_prot(dna_string):
+
+	"""
+	Takes a dna_string meant to be translated into a protein and returns
+	the corrsponding protein string. This function assumes:
+
+		len(dna_string) mod 3 == 0 (ie that dna_string is a reading frame)
+
+	If this is not the case, the trailing 1 or 2 nucleotides are left out of
+	the translation. 
+	If a start/stop codon pair is encountered, only the sequence between
+	them is translated. If only one of the pair is encountered, or if none 
+	are encountered, the entire string is translated.(I guess. See comments.)
+	If a file is provided, output is written to 'output_<fname>'.
+	"""
+
+	## Not sure how to have this function behave.
+	## The problem is that you generally want a function to return one type
+	## so that you don't have to type-check the function's returns, but
+	## if you encounter a start codon mid-way in the sequence, there is
+	## a choice to be made in keeping what was translated before that 
+	## (as if the sequence that was passed to the function was already
+	## inside a start/stop interval before it was passed) or only keeping 
+	## what is translated after the start codon or keeping everything. 
+	## And the choice becomes harder if there is no stop codon down the
+	## line or if the stop codon occurs before the end of the string. 
+	## The Open Reading Frames function is already meant to tackle this
+	## sort of translation problem.
+
+	if os.path.isfile(dna_string):
+		d = open(dna_string, 'r').read().replace('\n', '').upper()
+		f_out = True
+	else:
+		d = dna_string = dna_string.upper()
+		f_out = False
+
+	p = ''
+	
+	for i in d:
+		if dna_codons[i] == 'Start':
+			pass
+	pass
+
+
 def subs(string, substring):
 
 	"""
@@ -360,6 +421,7 @@ def subs(string, substring):
 		print(i, end = ' ')
 	print()
 	return indexes 
+
 
 def cons(fatsa_file):
 
@@ -724,7 +786,6 @@ def reading_frames(dna_string, simple = True):
 	reading_frames = []
 	d_c = reverse_compliment(d)
 	
-	## what happens when len(s)%3 = 0, 1 or 2? Any difference?
 	for s in [d, d_c]:
 		frames = []
 		for shift in range(3):
@@ -742,29 +803,7 @@ def reading_frames(dna_string, simple = True):
 	return reading_frames	
 			
 
-
-dna_codons = {
-
-	'ATG' : 'Start',
-	'TTT' : 'F',    'CTT' : 'L', 'ATT' :  'I', 'GTT' : 'V',
-	'TTC' : 'F',    'CTC' : 'L', 'ATC' :  'I', 'GTC' : 'V',
-	'TTA' : 'L',    'CTA' : 'L', 'ATA' :  'I', 'GTA' : 'V',
-	'TTG' : 'L',    'CTG' : 'L', 'ATG' :  'M', 'GTG' : 'V',
-	'TCT' : 'S',    'CCT' : 'P', 'ACT' :  'T', 'GCT' : 'A',
-	'TCC' : 'S',    'CCC' : 'P', 'ACC' :  'T', 'GCC' : 'A',
-	'TCA' : 'S',    'CCA' : 'P', 'ACA' :  'T', 'GCA' : 'A',
-	'TCG' : 'S',    'CCG' : 'P', 'ACG' :  'T', 'GCG' : 'A',
-	'TAT' : 'Y',    'CAT' : 'H', 'AAT' :  'N', 'GAT' : 'D',
-	'TAC' : 'Y',    'CAC' : 'H', 'AAC' :  'N', 'GAC' : 'D',
-	'TAA' : 'Stop', 'CAA' : 'Q', 'AAA' :  'K', 'GAA' : 'E',
-	'TAG' : 'Stop', 'CAG' : 'Q', 'AAG' :  'K', 'GAG' : 'E',
-	'TGT' : 'C'   , 'CGT' : 'R', 'AGT' :  'S', 'GGT' : 'G',
-	'TGC' : 'C'   , 'CGC' : 'R', 'AGC' :  'S', 'GGC' : 'G',
-	'TGA' : 'Stop', 'CGA' : 'R', 'AGA' :  'R', 'GGA' : 'G',
-	'TGG' : 'W'   , 'CGG' : 'R', 'AGG' :  'R', 'GGG' : 'G'}
-
-
-def dna_to_prots(dna_string):
+def dna_to_orf_to_proteins_to_find_better_name(dna_string):
 
 	"""
     dna_string -> A DNA string dna_string or a file containing a
@@ -775,10 +814,20 @@ def dna_to_prots(dna_string):
 	If a file is provided, output is written to 'output_<filename>'.
 	""" 	
 
-	d = dna_string = dna_string.upper()
-	
-	## get the reading frames for d
-	## read the frames into proteins into a list
+	if os.path.isfile(dna_string):
+		f = open(dna_string, 'r').read()
+		d = f.replace('\n', '').upper()
+		f_out = True
+	else:
+		d = dna_string = dna_string.upper()
+		f_out = False
+
+	d_frames = reading_frames(d)
+	proteins = []
+
+	for frame in range(len(d_frames)):
+
+
 	## search for start/stop codon-pairs in each frame
 	## (ie find open reading frames)
 	## translate the open frames into proteins
