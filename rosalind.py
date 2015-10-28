@@ -803,15 +803,15 @@ def reading_frames(dna_string, simple = True):
 	return reading_frames	
 			
 
-def dna_to_orf_to_proteins_to_find_better_name(dna_string):
+def dna_to_proteins(dna_string):
 
 	"""
-    dna_string -> A DNA string dna_string or a file containing a
+    dna_string -> A DNA string or a fasta file containing a
 				  DNA string.
 	
 	Returns every distinct candidate protein that can be translated 
 	from the Open Reading Frames of dna_string. 
-	If a file is provided, output is written to 'output_<filename>'.
+	If a fasta file is provided, output is written to 'output_<filename>'.
 	""" 	
 
 	if os.path.isfile(dna_string):
