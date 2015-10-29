@@ -371,50 +371,6 @@ def rna_to_prot(rna_string):
 	return p
 
 
-def dna_to_prot(dna_string):
-
-	"""
-	Takes a dna_string meant to be translated into a protein and returns
-	the corrsponding protein string. This function assumes:
-
-		len(dna_string) mod 3 == 0 (ie that dna_string is a reading frame)
-
-	If this is not the case, the trailing 1 or 2 nucleotides are left out of
-	the translation. 
-	If a start/stop codon pair is encountered, only the sequence between
-	them is translated. If only one of the pair is encountered, or if none 
-	are encountered, the entire string is translated.(I guess. See comments.)
-	If a file is provided, output is written to 'output_<fname>'.
-	"""
-
-	## Not sure how to have this function behave.
-	## The problem is that you generally want a function to return one type
-	## so that you don't have to type-check the function's returns, but
-	## if you encounter a start codon mid-way in the sequence, there is
-	## a choice to be made in keeping what was translated before that 
-	## (as if the sequence that was passed to the function was already
-	## inside a start/stop interval before it was passed) or only keeping 
-	## what is translated after the start codon or keeping everything. 
-	## And the choice becomes harder if there is no stop codon down the
-	## line or if the stop codon occurs before the end of the string. 
-	## The Open Reading Frames function is already meant to tackle this
-	## sort of translation problem.
-
-	if os.path.isfile(dna_string):
-		d = open(dna_string, 'r').read().replace('\n', '').upper()
-		f_out = True
-	else:
-		d = dna_string = dna_string.upper()
-		f_out = False
-
-	p = ''
-	
-	for i in d:
-		if dna_codons[i] == 'Start':
-			pass
-	pass
-
-
 def subs(string, substring, zero_based = True):
 
 	"""
@@ -979,7 +935,6 @@ def reverse_palindromes(dna_string, zero_based = True):
 			for i in pals:
 				fout.write('{} {}\n'.format(i[0], i[1]))
 	return pals
-
 
 
 
