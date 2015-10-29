@@ -920,7 +920,7 @@ def reverse_palindromes(dna_string, zero_based = True):
 	pals = []
 
 	for i in range(len(d) - 3):
-		for testlen in range(4,13,2):
+		for testlen in range(4, 13, 2):
 			a = d[ i : i + testlen ]
 			if len(a) >= testlen:
 				b = reverse_compliment(a)
@@ -936,6 +936,76 @@ def reverse_palindromes(dna_string, zero_based = True):
 				fout.write('{} {}\n'.format(i[0], i[1]))
 	return pals
 
+
+def dna_and_exons_to_protein(fasta_file):
+
+	"""
+	fasta_file -> A fasta file with the first entry being a DNA string d
+				  and the remaining entries being substrings of d acting as
+				  introns of d (which implies that the substrings should
+				  not overlap).
+
+	Returns the protein transcribed by the mRNA translated from the exons
+	of the given DNA string. Output is written to 'output_<fname>'.
+	"""
+	## To Do:
+	#### Write this in a more cohesive and less retarded way.
+	#### Check that the intron positions and lengths don't overlap and
+	#### therefore produce valid exons.
+	#### Check that the exon string is evenly divisble by 3 and therefore
+	#### nicely transcribable. 
+
+	dna_and_introns = fasta_read(fasta_file)
+
+	dna = dna_and_introns[0][1]
+	introns = [i[1] for i in dna_and_introns[1:]]
+
+	template_exon = '' # Will be built as a concatenation of all exons.
+	intron_intervals = []
+	
+	print('\ndna = {}\nlen = {}'.format(dna, len(dna)))
+	
+	for i in introns:
+		length = len(i)
+		positions = subs(dna, i)
+		print("\nintron = {}, len = {}\nposition in dna = {}"
+			  .format(i, length, positions))
+		for pos in positions:
+			intron_intervals += [range(pos, pos+length)]
+	
+	print('\nintron_intervals:')
+	for i in intron_intervals: print('\t{}'.format(i))
+
+	print("\nstarting the walk:")
+	for i in range(len(dna)):
+		print('\ti = {}'.format(i))
+		is_exon_part = True
+		for rng in intron_intervals:
+			if i in rng:
+				print("i in {}".format(rng))
+				is_exon_part = False
+		if is_exon_part:
+			template_exon += dna[i]
+
+	coding_exon = ''
+	mrna = ''
+	compliments = {"A":"T","G":"C","C":"G","T":"A"}
+	for i in template_exon:
+		coding_exon += compliments[i]
+	
+
+	for i in coding_exon:
+		if i == 'T':
+			mrna += 'U'
+		else:
+			mrna += i
+
+	protein = rna_to_prot(mrna)
+	return protein
+	
+
+a =dna_and_exons_to_protein('splc.txt')
+print(a)
 
 
 
