@@ -113,16 +113,16 @@ def reverse_compliment(dna_string):
 	return c
 
 
-def fatsa_read(fatsa_file, names = True):
+def fasta_read(fasta_file, names = True):
 
 	"""
-	Takes a file in FATSA format and returns list of
+	Takes a file in fasta format and returns list of
 	(ID, genetic_string) tuples.
 	"""
 
 	#names option not implemented yet
 	
-	f = fatsa_file
+	f = fasta_file
 	if not os.path.isfile(f):
 		raise ValueError("Invalid file")
 		return
@@ -140,16 +140,16 @@ def fatsa_read(fatsa_file, names = True):
 	return l	
 	
 
-def gc_content(fatsa_file):
+def gc_content(fasta_file):
 
 	"""
-	Takes a fatsa-formatted file containing 1 or more DNA strings
+	Takes a fasta-formatted file containing 1 or more DNA strings
 	and returns the ID and GC-content of the string with the
 	greatest GC-content, ie the percentage of a given DNA string
 	consiting of either G or C.
 	"""
 	
-	l = fatsa_read(fatsa_file)
+	l = fasta_read(fasta_file)
 	
 	max_gc = 0
 	max_entry = None
@@ -426,11 +426,11 @@ def subs(string, substring, zero_based = True):
 	return indexes 
 
 
-def cons(fatsa_file):
+def cons(fasta_file):
 
 	"""
 	Essential Goal: Average a set of genetic strings
-	Returns: A Consensus string and Profile Matrix P for a fatsa_file
+	Returns: A Consensus string and Profile Matrix P for a fasta_file
 		     containing n genetic strings of length m.
 
 	Profile Matrix P:
@@ -446,7 +446,7 @@ def cons(fatsa_file):
 		most frequently at the i_th indexes of the given strings.
 	"""
 
-	string_entries = fatsa_read(fatsa_file)
+	string_entries = fasta_read(fasta_file)
 	data_matrix = []
 	for i in range(len(string_entries)):
 		data_matrix += [string_entries[i][1]]	
@@ -479,7 +479,7 @@ def cons(fatsa_file):
 
 	p_syms_ordered = sorted(p, key = lambda entry: entry[0])	
 	
-	with open("output_{}".format(fatsa_file), 'w') as fout: 
+	with open("output_{}".format(fasta_file), 'w') as fout: 
 		print(consensus)
 		fout.write("{}\n".format(consensus))
 		for sym in p_syms_ordered:
@@ -492,16 +492,16 @@ def cons(fatsa_file):
 			fout.write("\n")
 		
 
-def overlap_graph(fatsa_file):
+def overlap_graph(fasta_file):
 
 	"""
-	Takes a fatsa_file containing DNA strings and prints the
+	Takes a fasta_file containing DNA strings and prints the
 	adjacency list corresponding to O_3, ie the overlap graph
 	of the strings where overlaps are at least 3 nucleotides long. 
 	(Also writes an output file for easy keeping)
 	"""
 
-	data = fatsa_read(fatsa_file)
+	data = fasta_read(fasta_file)
 	k = 3
 	directions = {}
 
@@ -516,7 +516,7 @@ def overlap_graph(fatsa_file):
 		if len(overlaps) != 0:
 			directions[tail[0]] = overlaps
 
-	with open("output_" + fatsa_file, 'w') as fout:
+	with open("output_" + fasta_file, 'w') as fout:
 		for tail in directions.keys():
 			for head in directions[tail]:
 				print("{} {}".format(tail, head))
@@ -542,14 +542,14 @@ def expected_offspring(AA_AA, AA_Aa, AA_aa, Aa_Aa, Aa_aa, aa_aa):
 
 	return EX
 
-def motif(fatsa_file):
+def motif(fasta_file):
 
 	"""
 	Returns the longest common substring of the genetic strings
-	contained in fatsa_file.
+	contained in fasta_file.
 	"""
 
-	data = fatsa_read(fatsa_file)
+	data = fasta_read(fasta_file)
 	data = [i[1] for i in data]
 	longest = ''
 
@@ -574,7 +574,7 @@ def motif(fatsa_file):
 					break
 		if len(lngst) > len(longest):
 			longest = lngst
-	with open("output_" + fatsa_file, 'w') as fout:
+	with open("output_" + fasta_file, 'w') as fout:
 		fout.write(longest)
 	return longest	
 
@@ -822,7 +822,7 @@ def dna_to_proteins(dna_string):
 	""" 	
 
 	if os.path.isfile(dna_string):
-		d = fatsa_read(dna_string)[0][1]
+		d = fasta_read(dna_string)[0][1]
 		f_out = True
 	else:
 		d = dna_string = dna_string.upper()
@@ -859,44 +859,56 @@ def dna_to_proteins(dna_string):
 	return proteins	
 
 
-def permutations(n):
+def permute(l):
+
+	"""
+	l -> list of set of (preferably) numbers (or objects, I guess)
+
+	Returns the list of all permutations of l.
+	"""
+
+	perms = []
+
+	if len(l) == 0:
+		return []
+	elif len(l) == 1:
+		return [l]
+	else:
+		for i in l:
+			i_perms = permute([j for j in l if j != i])
+			for perm in i_perms:
+				perms += [[i] + perm]
+		return perms
+
+
+def permutations(n, f_out = True, give_total = False):
 
 	"""
 	n -> Positive integer
 
 	Returns the total number of permuations of length n, followed
 	by a list of all such permuations.
+
+	If f_out is true, output is written to 'output_permuations.txt'.
+	If give_total is true, a tuple is returned, with the first element being
+	the total number of permuations and the second element being the list
+	of permutations.
 	"""
 
 	total = fact(n)
+	perms = permute(list(range(1,n+1)))
 
-
-
-def permute(l):
-
-	"Surely recursion is the way."
-
-	print("l = {}".format(l))
-	perms = []
-
-	if type(l) == None:
-		return
-	elif len(l) == 0:
-		return []
-	elif len(l) == 1:
-		return l
+	if f_out:
+		with open('output_permuations.txt', 'w') as fout:
+			fout.write("{}\n".format(total))
+			for perm in perms:
+				for i in perm:
+					fout.write('{} '.format(i))
+				fout.write('\n')
+	
+	if give_total:
+		return total, perms
 	else:
-		l = sorted(l)
-		#do the recursion stuff
-		for i in l:
-			perms += [[i] + permute([j for j in l if j != i])] 			
 		return perms
-
-for l in [[1], [1, 2], [1, 2, 3]]:
-	print("\nl = {}".format(l))
-	print("calling permute(l):")
-	p = permute(l)
-	for i in p:
-		print(i)
 
 
