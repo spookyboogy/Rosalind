@@ -583,6 +583,10 @@ def choose(n, k):
 
 	return fact(n)/(fact(k)*fact(n-k))
 
+def permute(n, k):
+	
+	return fact(n)/fact(n-k)
+
 	
 def ind_alleles(k, n):
 
@@ -864,6 +868,20 @@ def permutations(n):
 	by a list of all such permuations.
 	"""
 
-	pass
+	def permute(l):
 
+		"Surely recursion is the way."
+
+		l = sorted(l)
+		perms = []
+
+		if len(l) == 0:
+			return []
+		elif len(l) == 1:
+			return l:
+		else:
+			#do the recursion stuff
+			pass			
+	
+	total = fact(n)
 
