@@ -966,8 +966,11 @@ def reverse_palindromes(dna_string):
 
 	for i in range(len(d)):
 		for testlen in range(4,13,2):
-			if d[i:i+testlen] == revc[i:i+testlen]:
-				print('found a spot')
+			a = d[ i : i + testlen ]
+			b = rev_c[ i : i + testlen ]
+			print("a = {}, b = {}".format(a, b))
+			if a == b:	
+				print('found a pal at {}'.format(i))
 				pals += [(i, testlen)]
 
 
@@ -975,10 +978,9 @@ def reverse_palindromes(dna_string):
 		print(i)
 	return pals
 
-print('TCAATGCATGCGGGTCTATATGCAT')
-print(reverse_compliment('TCAATGCATGCGGGTCTATATGCAT')[::-1])
-print(reverse_compliment('TCAATGCATGCGGGTCTATATGCAT'))
-
+print('AAACCCTTT')
+print(reverse_compliment('AAACCCTTT'))
+print(reverse_palindromes('AAACCCTTT'))
 
 
 
