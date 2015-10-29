@@ -942,7 +942,7 @@ def protein_mass(protein_string):
 	return mass
 
 
-def reverse_palindromes(dna_string):
+def reverse_palindromes(dna_string, zero_based = True):
 
 	"""
 	dna_string -> A DNA string or a fasta file containing one.
@@ -955,32 +955,30 @@ def reverse_palindromes(dna_string):
 	"""
 
 	if os.path.isfile(dna_string):
-		d = open(dna_string).read().replace('\n', '').upper()
+		d = fasta_read(dna_string)[0][1]
 		f_out = True
 	else:
 		d = dna_string.upper()
 		f_out = False
 
 	pals = []
-	rev_c = reverse_compliment(d)
 
-	for i in range(len(d)):
+	for i in range(len(d) - 3):
 		for testlen in range(4,13,2):
 			a = d[ i : i + testlen ]
-			b = rev_c[ i : i + testlen ]
-			print("a = {}, b = {}".format(a, b))
-			if a == b:	
-				print('found a pal at {}'.format(i))
-				pals += [(i, testlen)]
+			if len(a) >= testlen:
+				b = reverse_compliment(a)
+				if a == b:	
+					if zero_based:
+						pals += [(i, testlen)]
+					else:
+						pals += [(i+1, testlen)]
 
-
-	for i in pals:
-		print(i)
+	if f_out:
+		with open('output_ {}'.format(dna_string), 'w') as fout:
+			for i in pals:
+				fout.write('{} {}\n'.format(i[0], i[1]))
 	return pals
-
-print('AAACCCTTT')
-print(reverse_compliment('AAACCCTTT'))
-print(reverse_palindromes('AAACCCTTT'))
 
 
 
