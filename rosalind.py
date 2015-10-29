@@ -43,6 +43,16 @@ dna_codons = {
 	'TGA' : 'Stop', 'CGA' : 'R', 'AGA' : 'R', 'GGA' : 'G',
 	'TGG' : 'W'   , 'CGG' : 'R', 'AGG' : 'R', 'GGG' : 'G'}
 
+prot_mass_table = {
+	'water' : 18.01056,
+	'A' : 71.03711 , 'C' : 103.00919, 'D' : 115.02694,
+	'E' : 129.04259, 'F' : 147.06841, 'G' : 57.02146 , 
+	'H' : 137.05891, 'I' : 113.08406, 'K' : 128.09496, 
+	'L' : 113.08406, 'M' : 131.04049, 'N' : 114.04293, 
+	'P' : 97.05276 , 'Q' : 128.05858, 'R' : 156.10111,
+	'S' : 87.03203 , 'T' : 101.04768, 'V' : 99.06841 , 
+	'W' : 186.07931, 'Y' : 163.06333 }
+
 
 def nucleotide_count(string):
 
@@ -910,5 +920,69 @@ def permutations(n, f_out = True, give_total = False):
 		return total, perms
 	else:
 		return perms
+
+
+def protein_mass(protein_string):
+
+	"""
+	protein_string -> A protein sequence or a file containing one
+
+	Returns the monoisotopic mass of the protein, assuming that all
+	amino acids are residues.
+	"""
+
+	if os.path.isfile(protein_string):
+		prot = open(protein_string, 'r').read().replace('\n', '').upper()
+	else:
+		prot = protein_string.upper()
+
+	mass = 0
+	for i in prot:
+		mass += prot_mass_table[i]
+	return mass
+
+
+def reverse_palindromes(dna_string):
+
+	"""
+	dna_string -> A DNA string or a fasta file containing one.
+
+	Returns the position and length of every reverse palindrome in the
+	string having length between 4 and 12. (Related to restriction
+	enzymes)
+	
+	If a fasta file is provided, output is written to 'output_<fname>'.
+	"""
+
+	if os.path.isfile(dna_string):
+		d = open(dna_string).read().replace('\n', '').upper()
+		f_out = True
+	else:
+		d = dna_string.upper()
+		f_out = False
+
+	pals = []
+	rev_c = reverse_compliment(d)
+
+	for i in range(len(d)):
+		for testlen in range(4,13,2):
+			if d[i:i+testlen] == revc[i:i+testlen]:
+				print('found a spot')
+				pals += [(i, testlen)]
+
+
+	for i in pals:
+		print(i)
+	return pals
+
+print('TCAATGCATGCGGGTCTATATGCAT')
+print(reverse_compliment('TCAATGCATGCGGGTCTATATGCAT')[::-1])
+print(reverse_compliment('TCAATGCATGCGGGTCTATATGCAT'))
+
+
+
+
+
+
 
 
