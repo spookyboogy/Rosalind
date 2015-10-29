@@ -868,20 +868,35 @@ def permutations(n):
 	by a list of all such permuations.
 	"""
 
-	def permute(l):
-
-		"Surely recursion is the way."
-
-		l = sorted(l)
-		perms = []
-
-		if len(l) == 0:
-			return []
-		elif len(l) == 1:
-			return l:
-		else:
-			#do the recursion stuff
-			pass			
-	
 	total = fact(n)
+
+
+
+def permute(l):
+
+	"Surely recursion is the way."
+
+	print("l = {}".format(l))
+	perms = []
+
+	if type(l) == None:
+		return
+	elif len(l) == 0:
+		return []
+	elif len(l) == 1:
+		return l
+	else:
+		l = sorted(l)
+		#do the recursion stuff
+		for i in l:
+			perms += [[i] + permute([j for j in l if j != i])] 			
+		return perms
+
+for l in [[1], [1, 2], [1, 2, 3]]:
+	print("\nl = {}".format(l))
+	print("calling permute(l):")
+	p = permute(l)
+	for i in p:
+		print(i)
+
 
