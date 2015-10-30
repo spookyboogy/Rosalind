@@ -2,8 +2,10 @@
 ## http://rosalind.info/problems/list-view/
 
 import os
+import operator
 from math import factorial as fact
 from urllib.request import urlopen
+
 
 rna_codons = {
 	#'AUG' : 'Start',
@@ -828,7 +830,8 @@ def dna_to_proteins(dna_string):
 def permute(l):
 
 	"""
-	l -> list of set of (preferably) numbers (or objects, I guess)
+	l -> list of set of (preferably) ordered numbers 
+		 (or objects, I guess)
 
 	Returns the list of all permutations of l.
 	"""
@@ -856,9 +859,9 @@ def permutations(n, f_out = True, give_total = False):
 	by a list of all such permuations.
 
 	If f_out is true, output is written to 'output_permuations.txt'.
-	If give_total is true, a tuple is returned, with the first element being
-	the total number of permuations and the second element being the list
-	of permutations.
+	If give_total is true, a tuple is returned, with the first element 
+	being the total number of permuations and the second element being
+	the list of permutations.
 	"""
 
 	total = fact(n)
@@ -954,6 +957,8 @@ def dna_and_introns_to_protein(fasta_file):
 	#### therefore produce valid exons.
 	#### Check that the exon string is evenly divisble by 3 and therefore
 	#### nicely transcribable. 
+	#### Somehow allow for multiple dna strings to be processed.
+	#### Somehow account for UTR's.
 
 	dna_and_introns = fasta_read(fasta_file)
 
@@ -990,6 +995,58 @@ def dna_and_introns_to_protein(fasta_file):
 	with open('output_{}'.format(fasta_file), 'w') as fout:
 		fout.write(protein)
 	return protein
+
+
+def combinations(items, n):
+	
+	"Returns a list of all combinations of length n of items." 
+
+	if not type(items) == list:
+		raise ValueError("items must be a list.")
+	if type(n) != int:
+		raise ValueError("n must be an integer.")
+	if n >= list(set(items)):
+		return items
+	
+	items = list(set(items))
+	combos = []
+	
+	for i in range(len(items):
+		
+		for item in items[i+1]:
+			pass			
+
+
+def lex_perms(ordered_alphabet, length = None):
+
+	"""
+	ordered_alphabet -> A collection of symbols defining and ordered
+						alphabet.
+	length -> If None or if length > len(alphabet), all permutations
+			  of ordered_alphabet are given in lexicographic order, as
+              defined by ordered_alphabet. If length < len(alphabet), 
+			  all strings of length length are given in lexicographic
+			  order.
+	Output is written to 'output_lex_perms.txt'.
+	"""
+
+	perms = []
+
+	if not length or length >= len(ordered_alphabet):
+		ln = len(ordered_alphabet)
+	elif length < len(ordered_alphabet):
+		ln = length
+
+	
+	
+		
+		
+
+
+
+	  
+	
+	
 
 
 
