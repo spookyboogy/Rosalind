@@ -937,13 +937,13 @@ def reverse_palindromes(dna_string, zero_based = True):
 	return pals
 
 
-def dna_and_exons_to_protein(fasta_file):
+def dna_and_introns_to_protein(fasta_file):
 
 	"""
 	fasta_file -> A fasta file with the first entry being a DNA string d
-				  and the remaining entries being substrings of d acting as
-				  introns of d (which implies that the substrings should
-				  not overlap).
+				  and the remaining entries being substrings of d 
+				  acting as introns of d (which implies that the
+				  substrings should not overlap).
 
 	Returns the protein transcribed by the mRNA translated from the exons
 	of the given DNA string. Output is written to 'output_<fname>'.
@@ -959,53 +959,38 @@ def dna_and_exons_to_protein(fasta_file):
 
 	dna = dna_and_introns[0][1]
 	introns = [i[1] for i in dna_and_introns[1:]]
-
-	template_exon = '' # Will be built as a concatenation of all exons.
+	
+	coding_region = ''
+	protein = ''
 	intron_intervals = []
-	
-	print('\ndna = {}\nlen = {}'.format(dna, len(dna)))
-	
-	for i in introns:
-		length = len(i)
-		positions = subs(dna, i)
-		print("\nintron = {}, len = {}\nposition in dna = {}"
-			  .format(i, length, positions))
-		for pos in positions:
-			intron_intervals += [range(pos, pos+length)]
-	
-	print('\nintron_intervals:')
-	for i in intron_intervals: print('\t{}'.format(i))
 
-	print("\nstarting the walk:")
+	for i in introns:
+		positions = subs(dna, i)
+		for pos in positions:
+			intron_intervals += [range(pos, pos + len(i))]
+	
 	for i in range(len(dna)):
-		print('\ti = {}'.format(i))
 		is_exon_part = True
 		for rng in intron_intervals:
 			if i in rng:
-				print("i in {}".format(rng))
 				is_exon_part = False
 		if is_exon_part:
-			template_exon += dna[i]
-
-	coding_exon = ''
-	mrna = ''
-	compliments = {"A":"T","G":"C","C":"G","T":"A"}
-	for i in template_exon:
-		coding_exon += compliments[i]
+			coding_region += dna[i]
 	
-
-	for i in coding_exon:
-		if i == 'T':
-			mrna += 'U'
-		else:
-			mrna += i
-
-	protein = rna_to_prot(mrna)
+	for i in range(0, len(coding_region) - 2, 3):
+		s = coding_region[i:i+3]
+		try:
+			if dna_codons[s] == 'Stop':
+				protein += ' '
+			else:
+				protein += dna_codons[s]
+		except Exception as ex:
+			print(ex)
+		
+	with open('output_{}'.format(fasta_file), 'w') as fout:
+		fout.write(protein)
 	return protein
-	
 
-a =dna_and_exons_to_protein('splc.txt')
-print(a)
 
 
 
