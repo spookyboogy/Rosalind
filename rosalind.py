@@ -5,7 +5,7 @@ import os
 import operator
 from math import factorial as fact
 from urllib.request import urlopen
-
+from collections import OrderedDict as Dict #dict is non-ordered
 
 rna_codons = {
 	#'AUG' : 'Start',
@@ -549,11 +549,11 @@ def motif(fasta_file):
 
 def choose(n, k):
 
-	return fact(n)/(fact(k)*fact(n-k))
+	return int(fact(n)/(fact(k)*fact(n-k)))
 
 def permute(n, k):
 	
-	return fact(n)/fact(n-k)
+	return int(fact(n)/fact(n-k))
 
 	
 def ind_alleles(k, n):
@@ -997,25 +997,38 @@ def dna_and_introns_to_protein(fasta_file):
 	return protein
 
 
-def combinations(items, n):
+def combinations(items, n, rep = False):
 	
-	"Returns a list of all combinations of length n of items." 
+	"""
+	Returns a list of all combinations of length n of items.
+	If rep = True, reptititions of items are allowed.
+	"""
 
-	if not type(items) == list:
-		raise ValueError("items must be a list.")
-	if type(n) != int:
-		raise ValueError("n must be an integer.")
-	if n >= list(set(items)):
-		return items
+	#if not type(items) == list:
+	#	raise ValueError("items must be a list.")
+	#if type(n) != int:
+	#	raise ValueError("n must be an integer.")
 	
-	items = list(set(items))
-	combos = []
-	
-	for i in range(len(items):
+	if n >= len(list(set(items))):
+		return [items]
+	elif n == 0:
+		return []
+	elif n == 1:
+		return [[i] for i in items]
+	else: 
+		combos = []
+
+		for i in range(len(items) - n + 1):
+			head = [items[i]]
+			for tail in combinations(items[i+1:], n - 1, rep = rep):
+				combos += [head + tail]
 		
-		for item in items[i+1]:
-			pass			
+		return combos
 
+			
+for i in combinations(['T','A','G','C'], n = 3): print(i)
+print()
+for i in combinations(['T','A','G','C'], n = 2): print(i)
 
 def lex_perms(ordered_alphabet, length = None):
 
