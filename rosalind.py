@@ -1020,9 +1020,16 @@ def combinations(items, n, rep = False):
 
 		for i in range(len(items) - n + 1):
 			head = [items[i]]
+			
 			for tail in combinations(items[i+1:], n - 1, rep = rep):
 				combos += [head + tail]
-		
+			
+			for rep in range(1, n):
+				# rep*head + combinations(items[i+1:], n-rep)
+				pass			
+			### this will probably miss repititions of items
+			### in items[len(items)-n+1:]
+			
 		return combos
 
 			
