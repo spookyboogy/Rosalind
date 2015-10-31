@@ -1025,7 +1025,7 @@ def combinations(items, n, rep = False):
 				combos += [head + tail]
 			
 			for rep in range(1, n):
-				# rep*head + combinations(items[i+1:], n-rep)
+				# rep*head + combinations(items[i+1:], n-rep, rep = ?)
 				pass			
 			### this will probably miss repititions of items
 			### in items[len(items)-n+1:]
