@@ -1017,30 +1017,24 @@ def combinations(items, n, rep = False):
 		return [[i] for i in items]
 	else: 
 		combos = []
-
-	
+		print()
 		if not rep:
 			for i in range(len(items) - n + 1):
 				head = [items[i]]
-				for tail in combinations(items[i+1:], n - 1, rep = rep):
+				for tail in combinations(items[i+1:], n - 1):
 					combos += [head + tail]
-	
 		else:
-				
 			for i in range(len(items)):
 				head = [items[i]]
 				for rep in range(1, n):
 					for tail in combinations(items[i:], n-rep, rep=rep):
-						combos += [rep*head + tail]
-			### this will probably miss repititions of items
-			### in items[len(items)-n+1:]
-			
+						combos += [rep*head + tail] 
 		return combos
 
-			
-for i in combinations(['T','A','G','C'], n = 3, rep = 1): print(i)
+rep = True			
+for i in combinations(['T','A','G','C'], n = 3, rep=rep): print(i)
 print()
-for i in combinations(['T','A','G','C'], n = 2, rep = 1): print(i)
+#for i in combinations(['T','A','G','C'], n = 1, rep=rep): print(i)
 
 def lex_perms(ordered_alphabet, length = None):
 
@@ -1065,12 +1059,12 @@ def lex_perms(ordered_alphabet, length = None):
 	
 	
 		
-		
-
-
-
-	  
+def test(i, flag = False):
 	
+	if flag:
+		print("wow")		
+  
+test(1,1)
 	
 
 
