@@ -997,7 +997,7 @@ def dna_and_introns_to_protein(fasta_file):
 	return protein
 
 
-def combinations(items, n, rep = False):
+def combinations(items, n, rep = False, tab = 0):
 	
 	"""
 	Returns a list of all combinations of length n of items.
@@ -1014,10 +1014,10 @@ def combinations(items, n, rep = False):
 	elif n == 0:
 		return []
 	elif n == 1:
+		print("{}n = {}".format(4*tab*' ', n))
 		return [[i] for i in items]
 	else: 
 		combos = []
-		print()
 		if not rep:
 			for i in range(len(items) - n + 1):
 				head = [items[i]]
@@ -1025,16 +1025,21 @@ def combinations(items, n, rep = False):
 					combos += [head + tail]
 		else:
 			for i in range(len(items)):
+				print("{}head = {}, i = {}, n = {}"
+					  .format(4*tab*' ',items[i], i, n))
 				head = [items[i]]
 				for rep in range(1, n):
-					for tail in combinations(items[i:], n-rep, rep=rep):
+					for tail in combinations(items[i:], n-rep,
+											 rep=1, tab = tab+1):
 						combos += [rep*head + tail] 
 		return combos
 
 rep = True			
-for i in combinations(['T','A','G','C'], n = 3, rep=rep): print(i)
+a = combinations(['T','A','G','C'], n = 3, rep=rep)
+for i in a: print(i)
 print()
-#for i in combinations(['T','A','G','C'], n = 1, rep=rep): print(i)
+
+for i in combinations(['T','A','G'], n = 2, rep=rep): print(i)
 
 def lex_perms(ordered_alphabet, length = None):
 
