@@ -1008,22 +1008,28 @@ def combinations(items, n, rep = False, tab = 0):
 	#	raise ValueError("items must be a list.")
 	#if type(n) != int:
 	#	raise ValueError("n must be an integer.")
-	
-	if n >= len(list(set(items))):
-		return [items]
-	elif n == 0:
+
+	if n == 0:
 		return []
 	elif n == 1:
-		print("{}n = {}".format(4*tab*' ', n))
-		return [[i] for i in items]
-	else: 
-		combos = []
-		if not rep:
+		if rep:
+			print("{}n = {}".format(4*tab*' ', n))
+		return [[i] for i in items]	
+
+	combos = []
+	if not rep:	
+		if n >= len(list(set(items))):
+			return [items]
+		else: 
 			for i in range(len(items) - n + 1):
 				head = [items[i]]
 				for tail in combinations(items[i+1:], n - 1):
 					combos += [head + tail]
-		else:
+			return combos
+	else:
+		if n > len(list(set(items))):
+			return [items] #wrong wrong wrong 
+		else: 
 			for i in range(len(items)):
 				print("{}head = {}, i = {}, n = {}"
 					  .format(4*tab*' ',items[i], i, n))
@@ -1032,14 +1038,15 @@ def combinations(items, n, rep = False, tab = 0):
 					for tail in combinations(items[i:], n-rep,
 											 rep=1, tab = tab+1):
 						combos += [rep*head + tail] 
-		return combos
+			return combos
 
-rep = True			
-a = combinations(['T','A','G','C'], n = 3, rep=rep)
-for i in a: print(i)
-print()
-
-for i in combinations(['T','A','G'], n = 2, rep=rep): print(i)
+rep = False		
+for i in combinations(['T','A','G','C'], n = 3, rep = rep): print(i)
+print('\n')
+for i in combinations(['T','A','G', 'C'], n = 2, rep=rep): print(i)
+print('\n')
+if rep:
+	for i in combinations(['T','A'], n = 2, rep=rep): print(i)
 
 def lex_perms(ordered_alphabet, length = None):
 
