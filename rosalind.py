@@ -997,59 +997,38 @@ def dna_and_introns_to_protein(fasta_file):
 	return protein
 
 
-def combinations(items, n, rep = False, tab = 1):
+def combinations(items, n, rep = False):
 	
 	"""
 	Returns a list of all combinations of length n of items.
 	If rep = True, reptititions of items are allowed.
 	"""
 
-	#if not type(items) == list:
-	#	raise ValueError("items must be a list.")
-	#if type(n) != int:
-	#	raise ValueError("n must be an integer.")
+	if type(items) != list:
+		raise ValueError("Items must be a list.")
+	if type(n) != int:
+		raise ValueError("n must be an integer.")
 
 	if n == 0:
-		return []
+		return [] 
 	elif n == 1:
-		if rep:
-			print("{}n = {}".format(4*tab*' ', n))
-		return [[i] for i in items]	
+		return [[i] for i in items]
+	elif n > len(list(set(items))) and not rep:
+		return [] 
 
 	combos = []
 	if not rep:	
-		if n >= len(list(set(items))):
-			return [items]
-		else: 
-			for i in range(len(items) - n + 1):
-				head = [items[i]]
-				for tail in combinations(items[i+1:], n - 1):
-					combos += [head + tail]
-			return combos
+		for i in range(len(items) - n + 1):
+			head = [items[i]]
+			for tail in combinations(items[i+1:], n - 1):
+				combos += [head + tail]
+		return combos
 	else:
-		if n > len(list(set(items))):
-			return [items] #wrong wrong wrong 
-		else: 
-			for i in range(len(items)):
-				indent = 2*tab*i*' '
-				tab += 1
-				print("{}head = {}, i = {}, n = {}"
-					  .format(indent,items[i], i, n))
-				head = [items[i]]
-				for rep in range(1, n):
-					for tail in combinations(items[i:], n-rep,rep=1,tab=tab):
-						print("{}tail = {}".format(indent, tail))
-						combos += [rep*head + tail] 
-			return combos
-
-
-rep = True		
-for i in combinations(['T','A','G','C'], n = 3, rep = rep): print(i)
-print('\n')
-#for i in combinations(['T','A','G', 'C'], n = 2, rep=rep): print(i)
-#print('\n')
-#if rep:
-#	for i in combinations(['T','A','G', 'C'], n = 2, rep=rep): print(i)
+		for i in range(len(items)):
+			head = [items[i]]
+			for tail in combinations(items[i:], n-1, rep=1):
+				combos += [head + tail]
+		return combos
 
 
 def lex_perms(ordered_alphabet, length = None):
@@ -1072,13 +1051,11 @@ def lex_perms(ordered_alphabet, length = None):
 	elif length < len(ordered_alphabet):
 		ln = length
 
-	
-	
 		
 def test(i, flag = False):
 	
 	if flag:
-		print("wow")		
+		print("wow!!!!")		
   
 test(1,1)
 	
