@@ -1098,7 +1098,7 @@ def partial_perms_count(n, k):
 	k -> Positive integer less than n
 
 	Returns the total number of partial permutations of length k
-	of the first n integers.
+	of the first n positive integers modulo 1,000,000.
 	"""
 
 	## Should be extended to account for non-integer sets and should
