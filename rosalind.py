@@ -855,8 +855,9 @@ def permutations(n, f_out = True, give_total = False):
 	"""
 	n -> Positive integer
 
-	Returns the total number of permuations of length n, followed
-	by a list of all such permuations.
+	Returns the total number of permuations of length n, ie, the
+	permutations of the first n positive integers, followed by a list
+	of all such permuations.
 
 	If f_out is true, output is written to 'output_permuations.txt'.
 	If give_total is true, a tuple is returned, with the first element 
@@ -1102,8 +1103,26 @@ def partial_perms_count(n, k):
 
 	a = choose(n,k)
 	b = fact(k)
-
 	return (a*b)%int(1E6)
+
+
+def monotonic_subsequence(sequence):
+	
+	"""
+	Takes a sequence or a file containing one and returns the longest
+	increasing subsequence and the longest decreasing subsequence.
+	If a file is given, it should be formatted as follows:
+
+	<Length of sequence>
+	<S e q u e n c e>
+
+	Output is written to 'output_<fname>'
+	"""
+
+	pass
+
+
+
 
 	
 
