@@ -1087,7 +1087,6 @@ def perfect_match_count(rna_string):
 		rna = rna_string.upper()
 
 	a_count, g_count = rna.count('A'), rna.count('G')
-
 	return fact(a_count)*fact(g_count)
 
 
@@ -1101,10 +1100,12 @@ def partial_perms_count(n, k):
 	of the first n positive integers modulo 1,000,000.
 	"""
 
-	## Should be extended to account for non-integer sets and should
-	## have an option for returning/outputting the partial permutations.
+	a = choose(n,k)
+	b = fact(k)
 
-	pass
+	return (a*b)%int(1E6)
+
+	
 
 
 
