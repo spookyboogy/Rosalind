@@ -1071,6 +1071,26 @@ def lex_perms(ordered_alphabet, n, rep = True):
 	return perms
 
 
+def perfect_match_count(rna_string):
+
+	"""
+	rna_string -> An rna string containing as many occurences of 
+				  'A' as 'U' and as many occurences of 'G' as 'C'
+				  or a fasta file containing such a string.
+
+	Returns the number of possible perfect matchings in the bonding 
+	graph of rna_string.
+	"""
+
+	if os.path.isfile(rna_string):
+		rna = fasta_read(rna_string)[0][1].upper()
+	else:
+		rna = rna_string.upper()
+
+	a_count, g_count = rna.count('A'), rna.count('G')
+
+	return fact(a_count)*fact(g_count)
+
 
 
 
