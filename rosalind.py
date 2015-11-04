@@ -1109,9 +1109,9 @@ def partial_perms_count(n, k):
 def monotonic_subsequence(sequence):
 	
 	"""
-	Takes a sequence or a file containing one and returns the longest
-	increasing subsequence and the longest decreasing subsequence.
-	If a file is given, it should be formatted as follows:
+	Takes an integer sequence or a file containing one and returns
+	the longest increasing subsequence and the longest decreasing
+	subsequence. If a file is given, it should be formatted as follows:
 
 	<Length of sequence>
 	<S e q u e n c e>
@@ -1119,7 +1119,19 @@ def monotonic_subsequence(sequence):
 	Output is written to 'output_<fname>'
 	"""
 
-	pass
+	if os.path.isfile(sequence):
+		f_out = True
+		with open(sequence, 'r') as f:
+			s = f.readlines()[1].replace(' ', '')
+
+	try:
+		s = [int(i) for i in s]
+	except:
+		raise ValueError("Sequence given must be an integer sequence.")
+
+	for i in s:
+		#do stuff
+		pass	
 
 
 
