@@ -1049,7 +1049,6 @@ def lex_perms(ordered_alphabet, n, rep = True):
 	"""
 
 	## Have yet to implement non-repetition lex_perms
-	
 	perms = []
 	alph = ordered_alphabet
 
@@ -1090,6 +1089,22 @@ def perfect_match_count(rna_string):
 	a_count, g_count = rna.count('A'), rna.count('G')
 
 	return fact(a_count)*fact(g_count)
+
+
+def partial_perms_count(n, k):
+
+	"""
+	n -> Positive integer
+	k -> Positive integer less than n
+
+	Returns the total number of partial permutations of length k
+	of the first n integers.
+	"""
+
+	## Should be extended to account for non-integer sets and should
+	## have an option for returning/outputting the partial permutations.
+
+	pass
 
 
 
