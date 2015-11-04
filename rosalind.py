@@ -1002,6 +1002,7 @@ def combinations(items, n, rep = False):
 	"""
 	Returns a list of all combinations of length n of items.
 	If rep = True, reptititions of items are allowed.
+	Returns list in lexicographic order.
 	"""
 
 	if type(items) != list:
@@ -1031,35 +1032,43 @@ def combinations(items, n, rep = False):
 		return combos
 
 
-def lex_perms(ordered_alphabet, length = None):
+def lex_perms(ordered_alphabet, n, rep = True):
 
 	"""
 	ordered_alphabet -> A collection of symbols defining and ordered
 						alphabet.
-	length -> If None or if length > len(alphabet), all permutations
+	n -> If n >= len(alphabet), all permutations
 			  of ordered_alphabet are given in lexicographic order, as
-              defined by ordered_alphabet. If length < len(alphabet), 
-			  all strings of length length are given in lexicographic
-			  order.
+              defined by ordered_alphabet. If n < len(alphabet), 
+			  all permutations of length n are given in
+			  lexicographic order.
+	rep -> If rep, the combinations of alphabet to be permuted include
+		   repetition combinations, ie, k-multicombinations where 
+		   k = n.
 	Output is written to 'output_lex_perms.txt'.
 	"""
 
+	## Have yet to implement non-repetition lex_perms
+	
 	perms = []
+	alph = ordered_alphabet
 
-	if not length or length >= len(ordered_alphabet):
-		ln = len(ordered_alphabet)
-	elif length < len(ordered_alphabet):
-		ln = length
+	if n == 0:
+		return []
+	elif n == 1:
+		return [[i] for i in alph]
+	else:
+		for i in range(len(alph)):
+			head = [alph[i]]
+			for tail in lex_perms(alph, n-1):
+				perms += [head + tail]	
 
-		
-def test(i, flag = False):
-	
-	if flag:
-		print("wow!!!!")		
-  
-test(1,1)
-	
-
+	with open('output_lex_perms.txt', 'w') as fout:
+		for i in perms:
+			for j in i:
+				fout.write('{}'.format(j))
+			fout.write('\n')
+	return perms
 
 
 
