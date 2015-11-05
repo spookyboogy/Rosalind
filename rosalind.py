@@ -1119,52 +1119,73 @@ def monotonic_subsequence(sequence):
 
 	Output is written to 'output_<fname>'
 	"""
+
+	def rec_subseqs(seq, inc = True):
+		
+		""" 
+		Takes a list of non-repeated integers and returns all 
+		increasing subsequences in the list if inc = True, all
+		decreasing subsequences in the list if inc = False.
+		"""
+
+		subseqs = []
+		s_len = len(seq)
+		if s_len == 0:
+			return []
+		elif s_len == 1:
+			return [seq]
+		elif s_len == 2:
+			if inc:
+				if seq[0] > seq[1]:
+					return [[seq[0]]]
+				else:
+					return [seq]
+			else:
+				if seq[0] > seq[1]:
+					return [seq]
+				else:
+					return [[seq[0]]]	
+		else:
+			for i in range(s_len):
+				head = [seq[i]]
+				if inc:
+					tails = [j for j in seq[i+1:] if j > seq[i]]
+				else:
+					tails = [j for j in seq[i+1:] if j < seq[i]]
+				for j in range(len(tails)):
+					for subseq in rec_subseqs(tails[j:], inc=inc):
+						subseqs += [head + subseq]
+		return subseqs	
+	
 	if type(sequence) == str:
 		if os.path.isfile(sequence):
 			f_out = True
 			with open(sequence, 'r') as f:
-				sequence = f.readlines()[1].replace(' ', '')
-
-	try:
-		s = [int(i) for i in sequence]
-	except:
-		raise ValueError("Sequence given must be an integer sequence.")
-
-
-	def rec_subseqs(seq, increasing = True):
-		
-		""" 
-		Takes a list of non-repeated integers and returns all 
-		increasing subsequences in the list if increasing = True, all
-		decreasing subsequences in the list if increasing = False.
-		"""
-
-		seqs = []
-		if len(seq) == 0:
-			return []
-		elif len(seq) == 1:
-			return [seq]
-		else:
-			for i in range(len(seq)):
-				head = [seq[i]]
-				if increasing:
-					tails = [j for j in seq[i+1:] if j > seq[i]]
-					for n in tails:
-						loc = seq.index(n)
-						for tail in rec_subseqs(seq[loc:]):
-							seqs += [head + tail]
-	#			else:
-	#				tails = [j for j in seq[i+1:] if j < seq[i]]
-		return seqs	
+				s = f.readlines()[1].replace(' ', '')
+		else: f_out = False
+	else:
+		f_out = False
+		try:
+			s = [int(i) for i in sequence]
+		except:
+			raise ValueError("First arg must be an integer sequence.")
 	
-	max_inc = []
+	max_inc, max_dec = [], []
 	for seq in rec_subseqs(s):
 		if len(seq) > len(max_inc):
 			max_inc = seq
-	
-	return [max_inc], rec_subseqs(s, increasing = False)
+	for seq in rec_subseqs(s, inc = False):	
+		if len(seq) > len(max_dec):
+			max_dec = seq
+
+	if f_out:
+		with open('output_{}'.format(sequence), 'w') as fout:
+			for seq in [max_inc, max_dec]:
+				for i in seq:
+					fout.write('{} '.format(i))
+				fout.write('\n')
+	return max_inc, max_dec
+
+for seq in monotonic_subsequence([5,1,4,2,3]): print(tuple(seq))
 
 
-for i in monotonic_subsequence([5,1,4,2,3]): 
-	for seq in i:
-		print(tuple(seq))
