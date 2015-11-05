@@ -1109,35 +1109,62 @@ def partial_perms_count(n, k):
 def monotonic_subsequence(sequence):
 	
 	"""
-	Takes an integer sequence or a file containing one and returns
-	the longest increasing subsequence and the longest decreasing
-	subsequence. If a file is given, it should be formatted as follows:
+	Takes an integer sequence (with no repetitions) or a file
+	containing one and returns the longest increasing subsequence 
+	and the longest decreasing subsequence. If a file is given, 
+	it should be formatted as follows:
 
 	<Length of sequence>
 	<S e q u e n c e>
 
 	Output is written to 'output_<fname>'
 	"""
-
-	if os.path.isfile(sequence):
-		f_out = True
-		with open(sequence, 'r') as f:
-			s = f.readlines()[1].replace(' ', '')
+	if type(sequence) == str:
+		if os.path.isfile(sequence):
+			f_out = True
+			with open(sequence, 'r') as f:
+				sequence = f.readlines()[1].replace(' ', '')
 
 	try:
-		s = [int(i) for i in s]
+		s = [int(i) for i in sequence]
 	except:
 		raise ValueError("Sequence given must be an integer sequence.")
 
-	for i in s:
-		#do stuff
-		pass	
 
+	def rec_subseqs(seq, increasing = True):
+		
+		""" 
+		Takes a list of non-repeated integers and returns all 
+		increasing subsequences in the list if increasing = True, all
+		decreasing subsequences in the list if increasing = False.
+		"""
 
-
-
+		seqs = []
+		if len(seq) == 0:
+			return []
+		elif len(seq) == 1:
+			return [seq]
+		else:
+			for i in range(len(seq)):
+				head = [seq[i]]
+				if increasing:
+					tails = [j for j in seq[i+1:] if j > seq[i]]
+					for n in tails:
+						loc = seq.index(n)
+						for tail in rec_subseqs(seq[loc:]):
+							seqs += [head + tail]
+	#			else:
+	#				tails = [j for j in seq[i+1:] if j < seq[i]]
+		return seqs	
 	
+	max_inc = []
+	for seq in rec_subseqs(s):
+		if len(seq) > len(max_inc):
+			max_inc = seq
+	
+	return [max_inc], rec_subseqs(s, increasing = False)
 
 
-
-
+for i in monotonic_subsequence([5,1,4,2,3]): 
+	for seq in i:
+		print(tuple(seq))
