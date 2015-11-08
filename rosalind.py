@@ -1106,7 +1106,7 @@ def partial_perms_count(n, k):
 	return (a*b)%int(1E6)
 
 
-def monotonic_subsequence(sequence):
+def recursive_LIS(sequence):
 	
 	"""
 	Takes an integer sequence (with no repetitions) or a file
@@ -1119,43 +1119,6 @@ def monotonic_subsequence(sequence):
 
 	Output is written to 'output_<fname>'
 	"""
-
-	def rec_subseqs(seq, inc = True):
-		
-		""" 
-		Takes a list of non-repeated integers and returns all 
-		increasing subsequences in the list if inc = True, all
-		decreasing subsequences in the list if inc = False.
-		"""
-
-		subseqs = []
-		s_len = len(seq)
-		if s_len == 0:
-			return []
-		elif s_len == 1:
-			return [seq]
-		elif s_len == 2:
-			if inc:
-				if seq[0] > seq[1]:
-					return [[seq[0]]]
-				else:
-					return [seq]
-			else:
-				if seq[0] > seq[1]:
-					return [seq]
-				else:
-					return [[seq[0]]]	
-		else:
-			for i in range(s_len):
-				head = [seq[i]]
-				if inc:
-					tails = [j for j in seq[i+1:] if j > seq[i]]
-				else:
-					tails = [j for j in seq[i+1:] if j < seq[i]]
-				for j in range(len(tails)):
-					for subseq in rec_subseqs(tails[j:], inc=inc):
-						subseqs += [head + subseq]
-		return subseqs	
 	
 	if type(sequence) == str:
 		if os.path.isfile(sequence):
@@ -1169,14 +1132,45 @@ def monotonic_subsequence(sequence):
 			s = [int(i) for i in sequence]
 		except:
 			raise ValueError("First arg must be an integer sequence.")
+
+	def rec_subseqs(seq):
+		
+		""" 
+		Takes a list of non-repeated integers and returns all 
+		increasing subsequences in the list if inc = True, all
+		decreasing subsequences in the list if inc = False.
+		"""
+		## Way too slow to work on large sequences u_u
+		subseqs = []
+		s_len = len(seq)
+		if s_len == 0:
+			return []
+		elif s_len == 1:
+			return [seq]
+		elif s_len == 2:
+			if seq[0] > seq[1]:
+				return [[seq[0]]]
+			else:
+				return [seq]
+		else:
+			for i in range(s_len):
+				head = seq[i]
+				tails = list((n for n in seq[i+1:] if n > head))
+				#tails = list(filter(lambda x: x > h, seq[i+1:]))
+				#tails = [j for j in seq[i+1:] if j > head]
+				for j in range(len(tails)):
+					for subseq in rec_subseqs(tails[j:]):
+						subseqs += [[head] + subseq]
+		return subseqs	
 	
 	max_inc, max_dec = [], []
 	for seq in rec_subseqs(s):
 		if len(seq) > len(max_inc):
 			max_inc = seq
-	for seq in rec_subseqs(s, inc = False):	
+	for seq in rec_subseqs([-i for i in s]):	
 		if len(seq) > len(max_dec):
 			max_dec = seq
+	max_dec = [-i for i in max_dec]
 
 	if f_out:
 		with open('output_{}'.format(sequence), 'w') as fout:
@@ -1186,6 +1180,14 @@ def monotonic_subsequence(sequence):
 				fout.write('\n')
 	return max_inc, max_dec
 
-for seq in monotonic_subsequence([5,1,4,2,3]): print(tuple(seq))
+
+def LongestIncreasingSubsequence(sequence):
+
+	"""
+	Returns the longest increasing subsequence of sequence.
+	"""
+
+	pass
+
 
 
