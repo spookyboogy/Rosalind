@@ -1181,15 +1181,59 @@ def recursive_LIS(sequence):
 	return max_inc, max_dec
 
 
-def LongestIncreasingSubsequence(sequence):
+def LIS(sequence):
 
 	"""
 	Returns the longest increasing subsequence of sequence.
 	"""
 	
-	pass
-	
-	
+	if type(sequence) == str:
+		if os.path.isfile(sequence):
+			f_out = True
+			with open(sequence, 'r') as f:
+				s = [int(i) for i in f.readlines()[1].split()]
+		else:
+			s = [int(i) for i in sequence] 
+			f_out = False
+	else:
+		f_out = False
+		try:
+			s = [int(i) for i in sequence]
+		except:
+			raise ValueError("First arg must be an integer sequence.")
+
+	def get_lis(s):
+			
+		lis = [[s[0]]]
+		for i in range(1, len(s)):
+			l_i = []
+			max_l_j = 0
+			for j in range(0, i):
+				if s[i] > lis[j][-1]:
+					if len(lis[j]) > max_l_j:
+						max_l_j = len(lis[j])
+						l_i = lis[j]
+			lis += [l_i + [s[i]]]
+		return lis
+
+	LIS = []
+	for seq in get_lis(s):
+		if len(seq) > len(LIS):
+			LIS = seq
+	LDS = []
+	for seq in get_lis([-i for i in s]):
+		if len(seq) > len(LDS):
+			LDS = seq
+	LDS = [-i for i in LDS]
+
+	if f_out:
+		with open('output_{}'.format(sequence), 'w') as fout:
+			for seq in [LIS, LDS]:
+				for i in seq:
+					fout.write('{} '.format(i))
+				fout.write('\n')
+	return LIS, LDS
+		
 
 
 
