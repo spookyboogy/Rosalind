@@ -1186,8 +1186,10 @@ def LongestIncreasingSubsequence(sequence):
 	"""
 	Returns the longest increasing subsequence of sequence.
 	"""
-
+	
 	pass
+	
+	
 
 
 
