@@ -1109,10 +1109,9 @@ def partial_perms_count(n, k):
 def recursive_LIS(sequence):
 	
 	"""
-	Takes an integer sequence (with no repetitions) or a file
-	containing one and returns the longest increasing subsequence 
-	and the longest decreasing subsequence. If a file is given, 
-	it should be formatted as follows:
+	Takes an integer sequence or a file containing one and returns 
+	the longest increasing subsequence and the longest decreasing 
+	subsequence. If a file is given, it should be formatted as follows:
 
 	<Length of sequence>
 	<S e q u e n c e>
@@ -1184,9 +1183,16 @@ def recursive_LIS(sequence):
 def LIS(sequence):
 
 	"""
-	Returns the longest increasing subsequence of sequence.
+	Takes an integer sequence or a file containing one and returns 
+	the longest increasing subsequence and the longest decreasing 
+	subsequence. If a file is given, it should be formatted as follows:
+
+	<Length of sequence>
+	<S e q u e n c e>
+
+	Output is written to 'output_<fname>'
 	"""
-	
+
 	if type(sequence) == str:
 		if os.path.isfile(sequence):
 			f_out = True
@@ -1234,6 +1240,33 @@ def LIS(sequence):
 				fout.write('\n')
 	return LIS, LDS
 		
+
+def edges_to_form_tree(graph_file):
+
+	"""
+	graph_file -> A file formatted as follows:
+			          n
+					  <adjacency list>
+				  Where n is the number of nodes in a graph containing
+				  no cycles. The adjacencies should be listed as follows:
+					  1 2
+					  3 4
+					  ...
+	Returns the minimum number of edges required to form a tree from
+	the given graph.
+	"""
+
+	if os.path.isfile(graph_file):
+		with open(graph_file, 'r') as f:
+			f = f.readlines()
+			n = int(f[0])
+			adj_list = [[int(j) for j in i.split()] for i in f[1:]]
+	else:
+		raise ValueError('Input must be a file. See docstring.')
+
+	# identify nodes not listed in adj_list
+	# identify leaf nodes
+	
 
 
 
