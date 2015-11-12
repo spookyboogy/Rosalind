@@ -1286,18 +1286,13 @@ def strprob(input_file):
 	else:
 		raise ValueError('Input must be a file. See strprob.__doc__')
 
-	print(d)
-	print(gc_contents)
-
 	def get_prob(gc_content):
 
 		prob = 1
 		C = G = gc_content/2
 		A = T = (1 - gc_content)/2
-
 		for i in d:
 			prob *= eval(i)
-
 		return prob
 
 	probs = []
