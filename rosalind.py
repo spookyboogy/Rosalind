@@ -3,7 +3,7 @@
 
 import os
 import operator
-from math import factorial as fact
+from math import log10, factorial as fact
 from urllib.request import urlopen
 from collections import OrderedDict as Dict #dict is non-ordered
 
@@ -1265,8 +1265,51 @@ def edges_to_form_tree(graph_file):
 		raise ValueError('Input must be a file. See docstring.')
 	
 	return n - len(adj_list) - 1	
-			
-			
+
+
+def strprob(input_file):
+
+	"""
+	input_file -> A file formatted as follows:
+				      <DNA-string>
+				      <Arbitrary, Space-separated GC-contents>
+	Returns an array of the same length as the GC-contents list representing
+	the probability that a random string constructed with each GC-content will
+	match s exactly.
+	"""
+
+	if os.path.isfile(input_file):
+		with open(input_file, 'r') as f:
+			f = f.readlines()
+			d = f[0].strip('\n').upper()
+			gc_contents = [float(i) for i in f[1].split()]
+	else:
+		raise ValueError('Input must be a file. See strprob.__doc__')
+
+	print(d)
+	print(gc_contents)
+
+	def get_prob(gc_content):
+
+		prob = 1
+		C = G = gc_content/2
+		A = T = (1 - gc_content)/2
+
+		for i in d:
+			prob *= eval(i)
+
+		return prob
+
+	probs = []
+	for gc in gc_contents:
+		probs += [log10(get_prob(gc))]
+
+	with open('output_{}'.format(input_file), 'w') as fout:
+		for i in probs:
+			fout.write('{} '.format(i))
+	return probs
+	
+
 	
 	
 
