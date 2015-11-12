@@ -1247,8 +1247,8 @@ def edges_to_form_tree(graph_file):
 	graph_file -> A file formatted as follows:
 			          n
 			          <adjacency list>
-				  Where n is the number of nodes in a graph containing
-				  no cycles. The adjacencies should be listed as follows:
+		          Where n is the number of nodes in a graph containing
+		          no cycles. The adjacencies should be listed as follows:
 					  1 2
 					  3 4
 					  ...
