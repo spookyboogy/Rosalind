@@ -1264,31 +1264,7 @@ def edges_to_form_tree(graph_file):
 	else:
 		raise ValueError('Input must be a file. See docstring.')
 	
-	edge_count = 0
-
-	for i in range(1, n+1):
-		listed = False
-		for l in adj_list:
-			if i in l:
-				listed = True
-				break
-		if not listed:
-			edge_count += 1
-
-	degrees = [[i, 0] for i in range(1, n+1)]
-	for i in range(len(adj_list)):
-		for n in adj_list[i]:
-			degrees[n-1][1] += 1
-	 
-	inner_nodes = [i[0] for i in degrees if i[1] > 1]
-	in_nodes_iso = [1 for i in inner_nodes]
-	for l in adj_list:
-		if l[0] in inner_nodes and l[1] in inner_nodes:
-			in_nodes_iso[inner_nodes.index(l[0])] = 0
-			in_nodes_iso[inner_nodes.index(l[1])] = 0
-
-	edge_count += sum(in_nodes_iso) - 1
-	return edge_count	
+	return n - len(adj_list) - 1	
 			
 			
 	
