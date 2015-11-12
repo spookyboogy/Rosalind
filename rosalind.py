@@ -3,7 +3,7 @@
 
 import os
 import operator
-from math import log10, factorial as fact
+from math import log10, floor, factorial as fact
 from urllib.request import urlopen
 from collections import OrderedDict as Dict #dict is non-ordered
 
@@ -1275,7 +1275,7 @@ def strprob(input_file):
 				      <Arbitrary, Space-separated GC-contents>
 	Returns an array of the same length as the GC-contents list representing
 	the probability that a random string constructed with each GC-content will
-	match s exactly.
+	match DNA-string exactly.
 	"""
 
 	if os.path.isfile(input_file):
@@ -1300,10 +1300,36 @@ def strprob(input_file):
 		for i in probs:
 			fout.write('{} '.format(i))
 	return probs
-	
-
-	
-	
 
 
+def shortest_superstring(fasta_file):
+
+	"""
+	Takes a fasta_file containing DNA string reads and returns the shortest
+	superstring containing all the given strings. For practical purposes,
+	this function is written on the assumption that there exists a unique
+	way to reconstruct the entire superstring from the reads by "gluing 
+	together" pairs of reads that overlap by more than half their length.
+	"""
+
+	
+	if os.path.isfile(fasta_file):
+		data = fasta_read(fasta_file)
+	else:
+		raise ValueError("Input must be a fasta file.")
+
+	overlaps = {i[0] : [] for i in data}
+
+	for i in range(len(data)):
+		for j in range(len(data)):
+			if i == j:
+				continue
+
+			s1, s2 = data[i][1], data[j][1]
+			length = min(len(s1), len(s2))
+
+			test_len = floor(len(s1)/2)
+			while test_len < length:
+				if not s1[:teslen] == s2[:teslen]:
+					pass
 
