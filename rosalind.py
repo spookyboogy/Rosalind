@@ -1295,10 +1295,7 @@ def strprob(input_file):
 			prob *= eval(i)
 		return prob
 
-	probs = []
-	for gc in gc_contents:
-		probs += [log10(get_prob(gc))]
-
+	probs = [log10(get_prob(gc)) for gc in gc_contents]
 	with open('output_{}'.format(input_file), 'w') as fout:
 		for i in probs:
 			fout.write('{} '.format(i))
