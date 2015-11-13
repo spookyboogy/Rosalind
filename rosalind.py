@@ -1305,7 +1305,7 @@ def strprob(input_file):
 def shortest_superstring(fasta_file):
 
 	"""
-	Takes a fasta_file containing DNA string reads and returns the shortest
+	Takes a fasta_file containing DNA reads and returns the shortest
 	superstring containing all the given strings. For practical purposes,
 	this function is written on the assumption that there exists a unique
 	way to reconstruct the entire superstring from the reads by "gluing 
@@ -1314,18 +1314,18 @@ def shortest_superstring(fasta_file):
 
 	
 	if os.path.isfile(fasta_file):
-		data = fasta_read(fasta_file)
+		reads = fasta_read(fasta_file)
 	else:
 		raise ValueError("Input must be a fasta file.")
 
-	overlaps = {i[0] : [] for i in data}
+	overlaps = {i[0] : [] for i in reads}
 
-	for i in range(len(data)):
-		s1 = data[i][1]
-		for j in range(len(data)):
+	for i in range(len(reads)):
+		s1 = reads[i][1]
+		for j in range(len(reads)):
 			if i == j: continue
 
-			s2 = data[j][1]
+			s2 = reads[j][1]
 			length = min(len(s1), len(s2))
 			
 			test_len = floor(length/2)
@@ -1337,6 +1337,6 @@ def shortest_superstring(fasta_file):
 						pass
 				else:
 					pass
-											
+
 
 
