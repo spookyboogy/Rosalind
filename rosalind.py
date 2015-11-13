@@ -1311,32 +1311,35 @@ def shortest_superstring(fasta_file):
 	way to reconstruct the entire superstring from the reads by "gluing 
 	together" pairs of reads that overlap by more than half their length.
 	"""
-
 	
 	if os.path.isfile(fasta_file):
-		reads = fasta_read(fasta_file)
+		reads = [i[1] for i in fasta_read(fasta_file)]
 	else:
 		raise ValueError("Input must be a fasta file.")
 
-	overlaps = {i[0] : [] for i in reads}
+	def merge_longest_overlap(reads):
 
-	for i in range(len(reads)):
-		s1 = reads[i][1]
-		for j in range(len(reads)):
-			if i == j: continue
+		longest_overlap = str()
 
-			s2 = reads[j][1]
-			length = min(len(s1), len(s2))
-			
-			test_len = floor(length/2)
-			while test_len < length:
-				if not s1[:teslen] == s2[:teslen]:
-					if not s1[testlen:] == s2[testlen:]:
-						break
+		for i in range(len(reads)):
+			for j in range(len(reads)):
+				if i == j: continue
+
+				if len(reads[i]) <= len(reads[j]):
+					s1, s2 = reads[i], reads[j]
+				else:
+					s1, s2 = reads[j], reads[i]
+				length = len(s1)
+
+				testlen = floor(length/2)
+				while testlen < length:
+					if not s1[:testlen] == s2[:testlen]:
+						if not s1[length-testlen:] == s2[length-testlen:]:
+							break
+						else:
+							pass
 					else:
 						pass
-				else:
-					pass
 
 
 
