@@ -1321,15 +1321,22 @@ def shortest_superstring(fasta_file):
 	overlaps = {i[0] : [] for i in data}
 
 	for i in range(len(data)):
+		s1 = data[i][1]
 		for j in range(len(data)):
-			if i == j:
-				continue
+			if i == j: continue
 
-			s1, s2 = data[i][1], data[j][1]
+			s2 = data[j][1]
 			length = min(len(s1), len(s2))
-
-			test_len = floor(len(s1)/2)
+			
+			test_len = floor(length/2)
 			while test_len < length:
 				if not s1[:teslen] == s2[:teslen]:
+					if not s1[testlen:] == s2[testlen:]:
+						break
+					else:
+						pass
+				else:
 					pass
+											
+
 
