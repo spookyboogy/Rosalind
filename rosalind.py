@@ -1317,29 +1317,54 @@ def shortest_superstring(fasta_file):
 	else:
 		raise ValueError("Input must be a fasta file.")
 
+
 	def merge_longest_overlap(reads):
 
-		longest_overlap = str()
+		"""
+		Takes a list of reads and returns the same list with the two
+		longest-overlapping strings having been joined.
+		"""
 
+		longest = str()
 		for i in range(len(reads)):
 			for j in range(len(reads)):
 				if i == j: continue
-
+				
 				if len(reads[i]) <= len(reads[j]):
 					s1, s2 = reads[i], reads[j]
 				else:
 					s1, s2 = reads[j], reads[i]
-				length = len(s1)
 
-				testlen = floor(length/2)
-				while testlen < length:
-					if not s1[:testlen] == s2[:testlen]:
-						if not s1[length-testlen:] == s2[length-testlen:]:
-							break
-						else:
-							pass
-					else:
-						pass
+				overlap = str()
+				testlen = len(s1)
+				while testlen > floor(len(s1)/2):
+					if s1[:testlen] == s2[len(s2)-testlen:]:
+						overlap = s2[:len(s2)-testlen] + s1
+						break
+					elif s2[:testlen] == s1[len(s1)-testlen:]:
+						overlap = s1[:len(s1)-testlen] + s2
+						break
+					testlen -= 1
+
+				if len(overlap) > len(longest):
+					longest = overlap
+					indices = (i, j)
+		if longest:
+			reads = [reads[i] for i in range(len(reads)) if i not in indices]
+			reads += [longest]
+		return reads
+
+
+	# This would never stop executing if there were a non-overlapping string.
+	# If this module were robust, this would be taken into consideration.
+	while len(reads) > 1:
+		reads = merge_longest_overlap(reads)
+
+	with open('output_{}'.format(fasta_file), 'w') as fout:
+		fout.write(reads[0])
+	return reads[0]
+
+
 
 
 
