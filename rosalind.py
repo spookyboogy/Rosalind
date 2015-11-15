@@ -966,8 +966,7 @@ def dna_and_introns_to_protein(fasta_file):
 	dna = dna_and_introns[0][1]
 	introns = [i[1] for i in dna_and_introns[1:]]
 	
-	coding_region = ''
-	protein = ''
+	coding_region, protein =  str(), str()
 	intron_intervals = []
 
 	for i in introns:
@@ -998,7 +997,7 @@ def dna_and_introns_to_protein(fasta_file):
 	return protein
 
 
-def combinations(items, n, rep = False):
+def combinations(items, k, rep = False):
 	
 	"""
 	Returns a list of all combinations of length n of items.
@@ -1008,48 +1007,62 @@ def combinations(items, n, rep = False):
 
 	if type(items) != list:
 		raise ValueError("Items must be a list.")
-	if type(n) != int:
+	if type(k) != int:
 		raise ValueError("n must be an integer.")
 
-	if n == 0:
+	if k == 0:
 		return [] 
-	elif n == 1:
+	elif k == 1:
 		return [[i] for i in items]
-	elif n > len(list(set(items))) and not rep:
+	elif k > len(list(set(items))) and not rep:
 		return [] 
 
 	combos = []
 	if not rep:	
-		for i in range(len(items) - n + 1):
+		for i in range(len(items) - k + 1):
 			head = [items[i]]
-			for tail in combinations(items[i+1:], n - 1):
+			for tail in combinations(items[i+1:], k - 1):
 				combos += [head + tail]
 		return combos
 	else:
 		for i in range(len(items)):
 			head = [items[i]]
-			for tail in combinations(items[i:], n-1, rep=1):
+			for tail in combinations(items[i:], k-1, rep=1):
 				combos += [head + tail]
 		return combos
 
 
-def lex_perms(ordered_alphabet, n, rep = True):
+## Should be extended to allow for repetition.
+def signed_combinations(n, k):
+
+	"""
+	n -> Positive integer
+	k -> Positive integer => n
+	
+	Returns a list of all k-combinations of the first n positive integers
+	including each integer negated. Does not include combinations like
+	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
+	"""
+
+	pass
+
+
+def lex_perms(ordered_alphabet, n):
 
 	"""
 	ordered_alphabet -> A collection of symbols defining and ordered
 						alphabet.
 	n -> If n >= len(alphabet), all permutations
 			  of ordered_alphabet are given in lexicographic order, as
-              defined by ordered_alphabet. If n < len(alphabet), 
-			  all permutations of length n are given in
-			  lexicographic order.
-	rep -> If rep, the combinations of alphabet to be permuted include
-		   repetition combinations, ie, k-multicombinations where 
-		   k = n.
+              defined by ordered_alphabet. If n < len(alphabet), all 
+			  permutations of length n are given in lexicographic order.
+
+	Note: Includes permutations with repetitions. I have yet to (but 
+		  should) implement non-repetition-including lex_perms.
+
 	Output is written to 'output_lex_perms.txt'.
 	"""
 
-	## Have yet to implement non-repetition lex_perms
 	perms = []
 	alph = ordered_alphabet
 
@@ -1095,7 +1108,7 @@ def partial_perms_count(n, k):
 
 	"""
 	n -> Positive integer
-	k -> Positive integer less than n
+	k -> Positive integer <= n
 
 	Returns the total number of partial permutations of length k
 	of the first n positive integers modulo 1,000,000.
@@ -1400,14 +1413,56 @@ def spliced_motif(fasta_file, zero_based = True):
 		for i in locations:
 			fout.write('{} '.format(i))
 	return locations
+
+
+def is_purine(nucleobase):
+	"Returns True if nucleobase is a purine, else False."
+
+	return True if nucleobase.upper() in ['A','G'] else False
+
+
+def is_pyrimadine(nucleobase):
+	"Returns True is nucleobase is a pyrimadine, else False."
+
+	return True if nucleobase.upper() in ['C','T','U'] else False
+		
+## If this were a robust function it would give accurate ratios
+## for both DNA and RNA.
+
+def trans_tranv_ratio(fasta_file):
+
+	"""
+	fasta_file -> A fasta-formatted file containing two DNA strings
+		          of equal length.
+
+	Returns the translation to transversion ratio between the 
+	two strings.
+	"""
 	
-
-
-
-
-
-
-
+	if os.path.isfile(fasta_file):
+		with open(fasta_file, 'r') as f:
+			data = [i[1] for i in fasta_read(fasta_file)]
+			s1, s2 = data[0], data[1]
+	else:
+		raise ValueError("Input must be a fasta file. See docstring.")
+	if not len(s1) == len(s2):
+		raise ValueError("Input strings must be of equal length.")
+	
+	translations, transversions = int(), int()
+	for i in range(len(s1)):
+		if not s1[i] == s2[i]:
+			if sum([is_purine(s1[i]), is_purine(s2[i])]) in [0,2]:
+				translations += 1
+			else:
+				transversions += 1
+	R = translations/transversions
+	
+	with open('output_{}'.format(fasta_file), 'w') as fout:
+		fout.write(str(R))
+	return R
+			
+	
+	
 
 
 
