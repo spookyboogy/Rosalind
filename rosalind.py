@@ -1055,7 +1055,7 @@ def signed_combinations(n, k):
 		pass
 
 	
-	if type(n) != int and type(k) != int:
+	if type(n) != int or type(k) != int:
 		raise ValueError("n and k must be integers.")
 	elif n < k: 
 		return []
