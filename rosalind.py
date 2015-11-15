@@ -1365,6 +1365,49 @@ def shortest_superstring(fasta_file):
 	return reads[0]
 
 
+def spliced_motif(fasta_file, zero_based = True):
+
+	"""
+	fasta_file -> A fasta-formatted file containing two strings; the first
+			      being a DNA string dna_string and the second being
+			      a motif string.
+
+	Returns the indices of dna_string where motif occurs as a 
+	subsequence of dna_string. Does not return more than one occurrence.
+
+	If zero_based is True, indices returned are 0-based, else 1-based.
+	"""
+	
+	if os.path.isfile(fasta_file):
+		with open(fasta_file, 'r') as f:
+			data = [t[1] for t in fasta_read(fasta_file)]
+			d = data[0]
+			motif = data[1]
+	else:
+		raise ValueError("Invalid input parameter. See docstring.")
+
+	locations = []
+	dna_index, motif_index = 0, 0
+	while dna_index < len(d) and motif_index < len(motif):
+		if d[dna_index] == motif[motif_index]:
+			locations += [dna_index]
+			motif_index += 1
+		dna_index += 1
+	
+	if not zero_based:
+		locations = [i+1 for i in locations]
+	with open('output_{}'.format(fasta_file), 'w') as fout:
+		for i in locations:
+			fout.write('{} '.format(i))
+	return locations
+	
+
+
+
+
+
+
+
 
 
 
