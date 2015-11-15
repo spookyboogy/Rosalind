@@ -1036,17 +1036,35 @@ def combinations(items, k, rep = False):
 def signed_combinations(n, k):
 
 	"""
-	n -> Positive integer
+	n -> Positive integer 
 	k -> Positive integer => n
 	
 	Returns a list of all k-combinations of the first n positive integers
 	including each integer negated. Does not include combinations like
 	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
 	"""
+	
+	def rec_combine(l, k):
+		
+		"""
+		l -> Range of integers
 
-	pass
+		Recursively generates the signed k-combinations of l.
+		"""	
+		
+		pass
 
+	
+	if type(n) != int and type(k) != int:
+		raise ValueError("n and k must be integers.")
+	elif n < k: 
+		return []
+	else:
+		combinations = rec_combine(range(1, n+1), k)
+		return combinations
 
+		
+	
 def lex_perms(ordered_alphabet, n):
 
 	"""
@@ -1422,7 +1440,7 @@ def is_purine(nucleobase):
 
 
 def is_pyrimadine(nucleobase):
-	"Returns True is nucleobase is a pyrimadine, else False."
+	"Returns True if nucleobase is a pyrimadine, else False."
 
 	return True if nucleobase.upper() in ['C','T','U'] else False
 		
@@ -1460,8 +1478,8 @@ def trans_tranv_ratio(fasta_file):
 	with open('output_{}'.format(fasta_file), 'w') as fout:
 		fout.write(str(R))
 	return R
-			
-	
+
+
 	
 
 
