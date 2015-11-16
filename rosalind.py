@@ -1044,17 +1044,29 @@ def signed_combinations(n, k):
 	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
 	"""
 	
-	def rec_combine(l, k):
+	def rec_combine(r, k):
 		
 		"""
-		l -> Range of integers
+		r -> Range of integers
 
-		Recursively generates the signed k-combinations of l.
+		Recursively generates the signed k-combinations of r.
 		"""	
 		
-		pass
+		combinations = []
 
-	
+		if len(r) == 0:
+			return []
+		elif k == 0:
+			return []
+		elif k == 1:
+			return [[i] for i in r] + [[-i] for i in r]
+		else:
+			for i in r:
+				tails = rec_combine(r[i:], k-1)
+				for tail in tails:
+					combinations += [[i] + tail] + [[-i] + tail]
+		return combinations
+
 	if type(n) != int or type(k) != int:
 		raise ValueError("n and k must be integers.")
 	elif n < k: 
@@ -1070,10 +1082,11 @@ def lex_perms(ordered_alphabet, n):
 	"""
 	ordered_alphabet -> A collection of symbols defining and ordered
 						alphabet.
-	n -> If n >= len(alphabet), all permutations
-			  of ordered_alphabet are given in lexicographic order, as
-              defined by ordered_alphabet. If n < len(alphabet), all 
-			  permutations of length n are given in lexicographic order.
+	n -> If n >= len(alphabet), all permutations 
+		 of ordered_alphabet are given in lexicographic order, as 
+		 defined by ordered_alphabet. 
+		 If n < len(alphabet), all permutations of length n are given 
+		 in lexicographic order.
 
 	Note: Includes permutations with repetitions. I have yet to (but 
 		  should) implement non-repetition-including lex_perms.
