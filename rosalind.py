@@ -1142,6 +1142,30 @@ def lex_perms(ordered_alphabet, n):
 	return perms
 
 
+def contains_perfect_matching(rna_string):
+	
+	"""
+	rna_string -> An rna string or a fasta file containing one.
+
+	Returns true if there exists a perfect match in rna_string,
+	else returns False.
+	"""
+	
+	if os.path.isfile(rna_string):
+		r = fasta_read(rna_string)[0][1]
+	else:
+		r = rna_string.upper()
+	
+	if len(r)//2 != 0:
+		return False
+	else:
+		if not r.count('A') == r.count('U'):
+			return False
+		elif not r.count('G') == r.count('G'):
+			return False
+		else: return True
+
+
 def perfect_match_count(rna_string):
 
 	"""
@@ -1158,8 +1182,11 @@ def perfect_match_count(rna_string):
 	else:
 		rna = rna_string.upper()
 
-	a_count, g_count = rna.count('A'), rna.count('G')
-	return fact(a_count)*fact(g_count)
+	if not contains_perfect_matching(rna_string):
+		raise Exception("Unequal number of occurences of A-U or G-C.")
+	else:	
+		a_count, g_count = rna.count('A'), rna.count('G')	
+		return fact(a_count)*fact(g_count)
 
 
 def partial_perms_count(n, k):
@@ -1559,7 +1586,34 @@ def catalan_number(n):
 	return catalans 
 
 
+def perfect_noncrossing_matchings(rna_string):
+
+	"""
+	rna_string -> An RNA string or a fasta file containing one,
+			      where the number of occurences of A equals that
+			      of U and the number of occurences of G equals that
+			      of C.
+
+	Returns the number of perfect non-crossing matchings in the
+	bonding graph of rna_string modulo 1,000,000.
+	"""
+
+	if os.path.isfile(rna_string):
+		rna = fasta_read(rna_string)[0][1]
+	else:
+		rna = rna_string.upper()
+
+	a_count, u_count = rna.count('A'), rna.count('U')
+	g_count, c_count = rna.count('G'), rna.count('C')
+
+	if not (a_count == u_count and g_count == c_count):
+		raise Exception("A perfect match cannot exist in given string.")
 	
+	pncm_count = int()
+
+	for i in range(2, len(rna), 2):
+		l, r = rna[:i], rna[i:]
+		
 
 	
 
