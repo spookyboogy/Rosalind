@@ -1044,27 +1044,27 @@ def signed_combinations(n, k):
 	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
 	"""
 	
-	def rec_combine(r, k):
+	def rec_combine(l, k, ind = 0):
 		
 		"""
-		r -> Range of integers
+		l -> List of range of integers
 
-		Recursively generates the signed k-combinations of r.
+		Recursively generates the signed k-combinations of l.
 		"""	
 		
 		combinations = []
-
-		if len(r) == 0:
+		if len(l) == 0:
 			return []
 		elif k == 0:
 			return []
 		elif k == 1:
-			return [[i] for i in r] + [[-i] for i in r]
+			return [[i] for i in l] + [[-i] for i in l]
 		else:
-			for i in r:
-				tails = rec_combine(r[i:], k-1)
+			for i in range(len(l)):
+				head = l[i]
+				tails = rec_combine(l[i+1:], k-1, ind = ind+2)
 				for tail in tails:
-					combinations += [[i] + tail] + [[-i] + tail]
+					combinations += [[head] + tail] + [[-head] + tail]
 		return combinations
 
 	if type(n) != int or type(k) != int:
@@ -1075,8 +1075,35 @@ def signed_combinations(n, k):
 		combinations = rec_combine(range(1, n+1), k)
 		return combinations
 
-		
-	
+
+def signed_permutations(n):
+
+	"""
+	n -> Positive integer
+
+	Returns the total number of signed permutations of length
+	n, followed by a list of all such permutations.
+
+	Writes output to 'output_<n>_sign_perms'.
+	"""
+
+	total = 0
+	signed_perms = []
+
+	for combination in signed_combinations(n, n):
+		for permutation in permute(combination):
+			total += 1
+			signed_perms += [permutation]
+
+	with open('output_{}_sign_perms'.format(n), 'w') as fout:
+		fout.write(str(total) + '\n')
+		for i in signed_perms:
+			for j in i:
+				fout.write('{} '.format(j))
+			fout.write('\n')
+	return total, signed_perms
+				
+				
 def lex_perms(ordered_alphabet, n):
 
 	"""
