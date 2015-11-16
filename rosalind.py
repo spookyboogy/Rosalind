@@ -1142,7 +1142,7 @@ def lex_perms(ordered_alphabet, n):
 	return perms
 
 
-def contains_perfect_matching(rna_string):
+def has_perfect_matching(rna_string):
 	
 	"""
 	rna_string -> An rna string or a fasta file containing one.
@@ -1182,7 +1182,7 @@ def perfect_match_count(rna_string):
 	else:
 		rna = rna_string.upper()
 
-	if not contains_perfect_matching(rna_string):
+	if not has_perfect_matching(rna_string):
 		raise Exception("Unequal number of occurences of A-U or G-C.")
 	else:	
 		a_count, g_count = rna.count('A'), rna.count('G')	
@@ -1603,17 +1603,21 @@ def perfect_noncrossing_matchings(rna_string):
 	else:
 		rna = rna_string.upper()
 
-	a_count, u_count = rna.count('A'), rna.count('U')
-	g_count, c_count = rna.count('G'), rna.count('C')
-
-	if not (a_count == u_count and g_count == c_count):
+	if not has_perfect_matching(rna_string):
 		raise Exception("A perfect match cannot exist in given string.")
 	
-	pncm_count = int()
+	def rec_pncm_count(rna):
+		"Counts the number of perfect noncrossing matchings on rna."
 
-	for i in range(2, len(rna), 2):
-		l, r = rna[:i], rna[i:]
-		
+		for i in range(2, len(rna), 2):
+			l, r = rna[:i], rna[i:]
+			if not (has_perfect_matching(l) and has_perfect_matching(r)):
+				continue
+			
+	
+	
+
+				
 
 	
 
