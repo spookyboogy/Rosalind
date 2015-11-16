@@ -1044,7 +1044,7 @@ def signed_combinations(n, k):
 	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
 	"""
 	
-	def rec_combine(l, k, ind = 0):
+	def rec_combine(l, k):
 		
 		"""
 		l -> List of range of integers
@@ -1062,7 +1062,7 @@ def signed_combinations(n, k):
 		else:
 			for i in range(len(l)):
 				head = l[i]
-				tails = rec_combine(l[i+1:], k-1, ind = ind+2)
+				tails = rec_combine(l[i+1:], k-1)
 				for tail in tails:
 					combinations += [[head] + tail] + [[-head] + tail]
 		return combinations
