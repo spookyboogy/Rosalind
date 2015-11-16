@@ -1520,6 +1520,33 @@ def trans_tranv_ratio(fasta_file):
 	return R
 
 
+def max_matchings_count(rna_string):
+
+	"""
+	rna_stirng -> An RNA string or a fasta file containing one.
+
+	Returns the total possible number of maximum matchings of 
+	basepair edges in the bonding graph of rna_string.
+	"""
+
+	if os.path.isfile(rna_string):
+		r = fasta_read(rna_string)[0][1].upper()
+	else:
+		r = rna_string.upper()
+	
+	matching_count = 0 
+	a_count, u_count = r.count('A'), r.count('U')
+	g_count, c_count = r.count('G'), r.count('C')
+
+	pur_min, pur_max = min(a_count, u_count), max(a_count, u_count)
+	pyr_min, pyr_max = min(g_count, c_count), max(g_count, c_count)
+
+	matching_count += fact(pur_min) * choose(pur_max, pur_min)
+	matching_count *= fact(pyr_min) * choose(pyr_max, pyr_min)
+
+	return matching_count
+	
+
 	
 
 
