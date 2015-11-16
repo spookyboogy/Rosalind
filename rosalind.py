@@ -1550,7 +1550,13 @@ def catalan_number(n):
 
 	"Returns the nth Catalan number."
 
-	pass
+	catalans = [1, 1]
+	for i in range(2, n+1):
+		c = int()
+		for k in range(1, i+1):
+			c += catalans[k-1] * catalans[i-k]
+		catalans += [c]
+	return catalans 
 
 
 	
