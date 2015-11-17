@@ -1582,7 +1582,7 @@ def catalan_number(n):
 		for k in range(1, i+1):
 			c += catalans[k-1] * catalans[i-k]
 		catalans += [c]
-	return catalans 
+	return catalans[-1]
 
 
 def pncm_count(rna_string):
@@ -1603,21 +1603,20 @@ def pncm_count(rna_string):
 		rna = rna_string.upper()
 
 	if not has_perfect_matching(rna_string):
-		raise Exception("A perfect match cannot exist in given string.")
+		raise Exception("A perfect matching cannot exist in given string.")
 	
+
 	def rec_pncm_count(rna, ind=0):
+
 		"Counts the number of perfect noncrossing matchings on rna."
 
 		pncm_count = 0
 		print(ind*' '+rna)
+
 		if len(rna) == 0:
 			return 0
-		elif len(rna) == 2:
-			if not rna[0] == rna[1]:
-				if sum((i in ['A','U']) for i in [rna[0], rna[1]]) != 1:
-					return 1
-				else:
-					return 0
+		elif len(rna) == 2: #Function is only passed perfect matchings
+			return 1
 		else:
 			for i in range(2, len(rna), 2):
 				sub_count = 0
