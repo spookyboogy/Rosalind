@@ -1609,10 +1609,21 @@ def perfect_noncrossing_matchings(rna_string):
 	def rec_pncm_count(rna):
 		"Counts the number of perfect noncrossing matchings on rna."
 
-		for i in range(2, len(rna), 2):
-			l, r = rna[:i], rna[i:]
-			if not (has_perfect_matching(l) and has_perfect_matching(r)):
-				continue
+		pncm_count = 0
+
+		if len(rna) == 0:
+			return 0
+		elif len(rna) == 2:
+			if not rna[0] == rna[1]:
+				if sum(is_purine(i) for i in [rna[0], rna[1]]) in [0,2]:
+					return 1
+				else:
+					return 0
+		else:
+			for i in range(2, len(rna), 2):
+				l, r = rna[:i], rna[i:]
+				if not (has_perfect_matching(l) and has_perfect_matching(r)):
+					continue
 			
 	
 	
