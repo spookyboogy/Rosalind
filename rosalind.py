@@ -1156,14 +1156,13 @@ def has_perfect_matching(rna_string):
 	else:
 		r = rna_string.upper()
 	
-	if len(r)//2 != 0:
+	if len(r)%2 != 0:
 		return False
 	else:
-		if not r.count('A') == r.count('U'):
+		if r.count('A')==r.count('U') and r.count('G')==r.count('C'):
+			return True
+		else:
 			return False
-		elif not r.count('G') == r.count('G'):
-			return False
-		else: return True
 
 
 def perfect_match_count(rna_string):
@@ -1586,7 +1585,7 @@ def catalan_number(n):
 	return catalans 
 
 
-def perfect_noncrossing_matchings(rna_string):
+def pncm_count(rna_string):
 
 	"""
 	rna_string -> An RNA string or a fasta file containing one,
@@ -1606,26 +1605,32 @@ def perfect_noncrossing_matchings(rna_string):
 	if not has_perfect_matching(rna_string):
 		raise Exception("A perfect match cannot exist in given string.")
 	
-	def rec_pncm_count(rna):
+	def rec_pncm_count(rna, ind=0):
 		"Counts the number of perfect noncrossing matchings on rna."
 
 		pncm_count = 0
-
+		print(ind*' '+rna)
 		if len(rna) == 0:
 			return 0
 		elif len(rna) == 2:
 			if not rna[0] == rna[1]:
-				if sum(is_purine(i) for i in [rna[0], rna[1]]) in [0,2]:
+				if sum((i in ['A','U']) for i in [rna[0], rna[1]]) != 1:
 					return 1
 				else:
 					return 0
 		else:
 			for i in range(2, len(rna), 2):
+				sub_count = 0
 				l, r = rna[:i], rna[i:]
-				if not (has_perfect_matching(l) and has_perfect_matching(r)):
-					continue
-			
+				if has_perfect_matching(l):
+					sub_count += rec_pncm_count(l, ind=ind+2)
+					if has_perfect_matching(r):
+						pncm_count += sub_count + rec_pncm_count(r,
+																ind=ind+2)
 	
+			return pncm_count
+	
+	return rec_pncm_count(rna)	
 	
 
 				
