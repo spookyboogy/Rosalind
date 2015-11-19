@@ -3,7 +3,7 @@
 
 import os
 import operator
-from math import log10, floor, factorial as fact
+from math import log10, floor, ceil, factorial as fact
 from urllib.request import urlopen
 from collections import OrderedDict as Dict #dict is non-ordered
 
@@ -1728,31 +1728,26 @@ def failure_array(string):
 		s = fasta_read(string)[0][1]
 		f_out = True
 	else:
-		s = s.upper()
+		s = string.upper()
 		f_out = False
 
-	f_arr = []
-	prefixes = []
-	
-	for i in range(1, len(s) + 1):
-		print(i)
-		count = 0
-		for k in range(1, ceil(i/2)):
-			if s[i-k:i] in prefixes:
-				count = k
-			
-			
-			#if s[i - k: i] in prefixes:
-			#	count = k
-			#	break
-			
-		f_arr += [count]
-		prefixes += [s[:i]]
+	f_arr = [0]*len(s)
+	length = 0
+	for i in range(1, len(s)-1):
 		
+		while length > 0 and s[length] != s[i]:
+			length = f_arr[length-1]
+
+		if s[length] == s[i]:
+			length += 1
+
+		f_arr[i] = length
+
 	if f_out:
 		with open('output_{}'.format(string), 'w') as fout:
 			for i in f_arr:
 				fout.write('{} '.format(i))
 	return f_arr
+
 
 
