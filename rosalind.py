@@ -1612,32 +1612,23 @@ def pncm_count(rna_string):
 
 		"Counts the number of perfect noncrossing matchings on rna."
 
-		pncm_count = 0
-		#print(ind*' '+rna)
-
-		if len(rna) == 0:
-			return 0
-		elif len(rna) == 2: #Function is only passed perfect matchings
+		if len(rna) <= 2: #Function is only passed perfect matchings
 			return 1
 		else:
-			if rna in encountered.keys():
+			if rna in encountered:
 				return encountered[rna]
-
-			handshake = 1
-			for i in range(int(len(rna)/2)):
-				if bondings[rna[i]] != rna[-i-1]:
-					handshake = 0; break
-
-			for i in range(2, len(rna), 2):
-				l, r = rna[:i], rna[i:]
-				if has_perfect_matching(l):
-					l_count = rec_pncm_count(l, ind=ind+2)
-					if has_perfect_matching(r):
+			
+			pncm_count = 0
+			for i in range(1, len(rna), 2):
+				if bondings[rna[0]] == rna[i]:
+					l, r = rna[1:i], rna[i+1:]	
+					if has_perfect_matching(l): #then so does r
+						l_count = rec_pncm_count(l, ind=ind+2)
 						r_count = rec_pncm_count(r, ind=ind+2)
 						pncm_count += l_count * r_count
-			
-			encountered[rna] = pncm_count + handshake			
-			return pncm_count + handshake
+
+			encountered[rna] = pncm_count			
+			return pncm_count
 	
 	return rec_pncm_count(rna) % int(1E6)	
 	
