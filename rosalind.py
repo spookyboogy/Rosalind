@@ -1737,10 +1737,14 @@ def failure_array(string):
 	for i in range(1, len(s) + 1):
 		print(i)
 		count = 0
-		for k in range(ceil(i/2))[::-1]:
-			if s[i - k: i] in prefixes:
+		for k in range(1, ceil(i/2)):
+			if s[i-k:i] in prefixes:
 				count = k
-				break
+			
+			
+			#if s[i - k: i] in prefixes:
+			#	count = k
+			#	break
 			
 		f_arr += [count]
 		prefixes += [s[:i]]
