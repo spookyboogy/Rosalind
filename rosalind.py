@@ -1638,7 +1638,27 @@ def inodes(n):
 	"""
 
 	return n - 2
-	
 
+
+def corr(fasta_file):
+
+	"""
+	fasta_file -> A fasta-formatted file containing DNA reads of
+	              equal length where some contain single-nucleotide
+	              errors. For each read, one of the following applies:
+
+	                 - The read is correct and appears at least twice
+	                   in the set (possible as a reverse complement).
+	                 - The read is incorrect and appears only once,
+	                   and has a hamming distance of 1 from exactly
+	                   one correct read in the set (or its reverse
+	                   complement).  
+
+	Returns a list of all read corrections (with 1 symbol substitution)
+	in the form: [old read]->[new read]. Output is written to 
+	'output_<fasta_file>'.
+	"""
+
+	pass
 
 
