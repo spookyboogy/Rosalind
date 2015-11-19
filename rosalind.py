@@ -118,10 +118,7 @@ def reverse_compliment(dna_string):
 	s = dna_string = dna_string.upper()[::-1]
 
 	compliments = {"A":"T", "C":"G", "G":"C", "T":"A"}
-
-	c = ''
-	for i in s:
-		c += compliments[i]
+	c = ''.join(compliments[i] for i in s)
 	return c
 
 
