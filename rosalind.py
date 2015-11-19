@@ -182,16 +182,11 @@ def hamm(s, t):
 	between s and t.
 	"""
 
-	d = 0
-
 	if len(s) != len(t):
 		raise ValueError("Strings should be the same length")
-	else:
-		for i in range(len(s)):
-			if s[i] != t[i]:
-				d += 1
-	return d			
 	
+	return sum((s[i] != t[i]) for i in range(len(s)))
+
 
 def rabbits(n, m = 0, k = 1):
 
@@ -1664,13 +1659,29 @@ def corr(fasta_file):
 	else:
 		raise ValueError("Input must a proper fasta file. See .__doc__")
 
+	corrections = []
 	correct_reads = []
+	incorrect_reads = []
 	for i in reads:
 		if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
-			if reverse_compliment(i) not in correct_reads:
+			if i not in correct_reads:
 				correct_reads += [i]
-	correct_reads = list(set(correct_reads))
+		else:
+			incorrect_reads += [i]
 	
+	for i in incorrect_reads:
+		for j in correct_reads:
+			if hamm(i,j) == 1:
+				corrections += [(i, j)]
+			elif hamm(i, reverse_compliment(j)) == 1:
+				corrections += [(i, reverse_compliment(j))]
+
+	with open('output_{}'.format(fasta_file), 'w') as fout:	
+		for i in set(corrections):
+			fout.write('{}->{}\n'.format(i[0], i[1]))
+	return corrections
+		
+		
 	
 		
 		
