@@ -117,8 +117,8 @@ def reverse_compliment(dna_string):
 
 	s = dna_string = dna_string.upper()[::-1]
 
-	compliments = {"A":"T", "C":"G", "G":"C", "T":"A"}
-	c = ''.join(compliments[i] for i in s)
+	complements = {"A":"T", "C":"G", "G":"C", "T":"A"}
+	c = ''.join(complements[i] for i in s)
 	return c
 
 
@@ -1648,7 +1648,7 @@ def corr(fasta_file):
 	              errors. For each read, one of the following applies:
 
 	                 - The read is correct and appears at least twice
-	                   in the set (possible as a reverse complement).
+	                   in the set (possibly as its reverse complement).
 	                 - The read is incorrect and appears only once,
 	                   and has a hamming distance of 1 from exactly
 	                   one correct read in the set (or its reverse
@@ -1659,6 +1659,16 @@ def corr(fasta_file):
 	'output_<fasta_file>'.
 	"""
 
-	pass
+	if os.path.isfile(fasta_file):
+		reads = [i[1] for i in fasta_read(fasta_file)]
+	else:
+		raise ValueError("Input must a proper fasta file. See .__doc__")
 
+	correct_reads = []
+	for i in reads:
+		if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
+			correct_reads += [i]
+	
+		
+		
 
