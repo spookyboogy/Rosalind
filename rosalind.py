@@ -1659,9 +1659,8 @@ def corr(fasta_file):
 	else:
 		raise ValueError("Input must a proper fasta file. See .__doc__")
 
-	corrections = []
-	correct_reads = []
-	incorrect_reads = []
+	corrections, correct_reads, incorrect_reads = [], [], []
+	
 	for i in reads:
 		if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
 			if i not in correct_reads:
