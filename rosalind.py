@@ -1630,8 +1630,14 @@ def pncm_count(rna_string):
 	return rec_pncm_count(rna) % int(1E6)	
 	
 
-				
+def inodes(n):
 
+	"""
+	Returns the number of internal nodes in unrooted binary
+	tree with n leaves.
+	"""
+
+	return n - 2
 	
 
 
