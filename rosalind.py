@@ -1733,7 +1733,22 @@ def failure_array(string):
 
 	f_arr = []
 	prefixes = []
-
-	for i in range(len(s)):
+	
+	for i in range(1, len(s) + 1):
+		print(i)
+		count = 0
+		for k in range(ceil(i/2))[::-1]:
+			if s[i - k: i] in prefixes:
+				count = k
+				break
+			
+		f_arr += [count]
 		prefixes += [s[:i]]
+		
+	if f_out:
+		with open('output_{}'.format(string), 'w') as fout:
+			for i in f_arr:
+				fout.write('{} '.format(i))
+	return f_arr
+
 
