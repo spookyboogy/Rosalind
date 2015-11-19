@@ -1684,7 +1684,7 @@ def corr(fasta_file):
 ## Needs a small refactoring to account for values of k other than 4.
 ## Written in this dumb way using ordered dict because of failure of 
 ## 'AAAA'.count('AA'), for example. Should be 3 but gives 2.
- 
+
 def k_mer_comp(dna_string):
 
 	"""
@@ -1700,7 +1700,7 @@ def k_mer_comp(dna_string):
 		dna = dna_string.upper()
 		f_out = False
 
-	k_mers = [''.join(i for i in j) for j in lex_perms(['A','C','G','T'], 4)]
+	k_mers = [''.join(i for i in j) for j in lex_perms(['ACGT'], 4)]
 	composition = Dict([[i, 0] for i in k_mers])
 
 	for i in range(0, len(dna)-3):
@@ -1714,4 +1714,26 @@ def k_mer_comp(dna_string):
 	return [composition[key] for key in composition]
 
 
+def failure_array(string):
+
+	"""
+	string -> A [genetic] string of a fasta_file containing one.
+
+	Returns the failure array of string.
+	Output is written to 'f_array.txt' or 'output_<string>' if string
+	is a file.
+	"""
+
+	if os.path.isfile(string):
+		s = fasta_read(string)[0][1]
+		f_out = True
+	else:
+		s = s.upper()
+		f_out = False
+
+	f_arr = []
+	prefixes = []
+
+	for i in range(len(s)):
+		prefixes += [s[:i]]
 
