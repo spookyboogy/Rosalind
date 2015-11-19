@@ -1667,7 +1667,10 @@ def corr(fasta_file):
 	correct_reads = []
 	for i in reads:
 		if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
-			correct_reads += [i]
+			if reverse_compliment(i) not in correct_reads:
+				correct_reads += [i]
+	correct_reads = list(set(correct_reads))
+	
 	
 		
 		
