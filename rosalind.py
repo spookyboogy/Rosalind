@@ -1657,7 +1657,7 @@ def corr(fasta_file):
 	if os.path.isfile(fasta_file):
 		reads = [i[1] for i in fasta_read(fasta_file)]
 	else:
-		raise ValueError("Input must a proper fasta file. See .__doc__")
+		raise ValueError("Input must be a proper fasta file. See .__doc__")
 
 	corrections, correct_reads, incorrect_reads = [], [], []
 	
@@ -1678,10 +1678,40 @@ def corr(fasta_file):
 	with open('output_{}'.format(fasta_file), 'w') as fout:	
 		for i in set(corrections):
 			fout.write('{}->{}\n'.format(i[0], i[1]))
-	return corrections
-		
-		
-	
-		
-		
+	return list(set(corrections))
+
+
+## Needs a small refactoring to account for values of k other than 4.
+## Written in this dumb way using ordered dict because of failure of 
+## 'AAAA'.count('AA'), for example. Should be 3 but gives 2.
+ 
+def k_mer_comp(dna_string):
+
+	"""
+	dna_string -> A DNA string or a fasta file containing one.
+
+	Returns the 4-mer compositoin of dna_string.
+	"""
+
+	if os.path.isfile(dna_string):
+		dna = fasta_read(dna_string)[0][1]
+		f_out = True
+	else:
+		dna = dna_string.upper()
+		f_out = False
+
+	k_mers = [''.join(i for i in j) for j in lex_perms(['A','C','G','T'], 4)]
+	composition = Dict([[i, 0] for i in k_mers])
+
+	for i in range(0, len(dna)-3):
+		composition[dna[i:i+4]] += 1
+
+	if f_out:
+		with open('output_{}'.format(dna_string), 'w') as fout:
+			for i in composition.keys():
+				fout.write('{} '.format(composition[i]))
+
+	return [composition[key] for key in composition]
+
+
 
