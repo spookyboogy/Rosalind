@@ -1733,14 +1733,11 @@ def failure_array(string):
 
 	f_arr = [0]*len(s)
 	length = 0
-	for i in range(1, len(s)-1):
-		
+	for i in range(1, len(s)):
 		while length > 0 and s[length] != s[i]:
 			length = f_arr[length-1]
-
 		if s[length] == s[i]:
 			length += 1
-
 		f_arr[i] = length
 
 	if f_out:
