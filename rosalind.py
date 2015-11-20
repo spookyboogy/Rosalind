@@ -998,8 +998,8 @@ def combinations(items, k, rep = False):
 	Returns list in lexicographic order.
 	"""
 
-	if type(items) != list:
-		raise ValueError("Items must be a list.")
+	#if type(items) != list:
+	#	raise ValueError("Items must be a list.")
 	if type(k) != int:
 		raise ValueError("n must be an integer.")
 
@@ -1500,16 +1500,36 @@ def spliced_motif(fasta_file, zero_based = True):
 			motif_index += 1
 		dna_index += 1
 
-	if len(locations) == len(motif):
-		if not zero_based:
-			locations = [i+1 for i in locations]
-		if f_out:
-			with open('output_{}'.format(fasta_file), 'w') as fout:
-				for i in locations:
-					fout.write('{} '.format(i))
-		return locations
+	if not zero_based:
+		locations = [i+1 for i in locations]
+
+	if f_out:
+		with open('output_{}'.format(fasta_file), 'w') as fout:
+			for i in locations:
+				fout.write('{} '.format(i))
+	return locations
+
+
+def is_subsequence(seq, subseq):
+
+	"""
+	seq -> A DNA string
+	subseq -> A DNA string of length less then seq
+
+	Returns True is subseq is a subsequence of seq, else False.
+	"""
+
+	ss_len = len(subseq)
+	s_index, ss_index = 0, 0
+	while s_index < len(seq) and ss_index < ss_len:
+		if seq[s_index] == subseq[ss_index]:
+			ss_index += 1
+		s_index += 1
+	
+	if ss_index == ss_len:
+		return True
 	else:
-		return None
+		return False
 
 
 def is_purine(nucleobase):
@@ -1789,9 +1809,9 @@ def longest_common_subseq(fasta_file):
 	
 
 	if len(s1) > len(s2):
-		s, t = [i for i in s1], [j for j in s2]
+		s, t = s1, s2
 	else:
-		s, t = [i for i in s2], [j for j in s1]
+		s, t = s2, s1
 
 	longest = ''
 	## Consider building a list of already-encountered
@@ -1810,7 +1830,7 @@ def longest_common_subseq(fasta_file):
 		for motif in combinations(t, i): 
 			## Need to avoid the overheadof spliced_motif
 			## function (among other things).
-			if spliced_motif([s, motif]):
+			if is_subsequence(s, motif):
 				## Unnecessary to check this if we are always 
 				## increasing motif len
 				#if len(motif) > len(longest): 
