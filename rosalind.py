@@ -502,6 +502,7 @@ def expected_offspring(AA_AA, AA_Aa, AA_aa, Aa_Aa, Aa_aa, aa_aa):
 
 	return EX
 
+
 def motif(fasta_file):
 
 	"""
@@ -1006,7 +1007,7 @@ def combinations(items, k, rep = False):
 		return [] 
 	elif k == 1:
 		return [[i] for i in items]
-	elif k > len(list(set(items))) and not rep:
+	elif k > len(list(items)) and not rep:
 		return [] 
 
 	combos = []
@@ -1459,7 +1460,8 @@ def spliced_motif(fasta_file, zero_based = True):
 	"""
 	fasta_file -> A fasta-formatted file containing two strings; the first
 			      being a DNA string dna_string and the second being
-			      a motif string.
+			      a motif string. Also accepts an indexable container
+				  of two such strings.
 
 	Returns the indices of dna_string where motif occurs as a 
 	subsequence of dna_string. Does not return more than one occurrence.
@@ -1473,7 +1475,11 @@ def spliced_motif(fasta_file, zero_based = True):
 			d = data[0]
 			motif = data[1]
 	else:
-		raise ValueError("Invalid input parameter. See docstring.")
+		try:
+			d = fasta_file[0].upper()
+			motif = fasta_file[1].upper()
+		except:
+			raise ValueError("Invalid input parameter. See docstring.")
 
 	locations = []
 	dna_index, motif_index = 0, 0
@@ -1759,15 +1765,28 @@ def longest_common_subseq(fasta_file):
 	
 	if os.path.isfile(fasta_file):
 		strings = [i[1] for i in fasta_read(fasta_file)[:2]]
-		s, t = strings[0], strings[1]
+		s1, s2 = strings[0], strings[1]
 	else:
 		try:
-			s, t = fasta_file[0].upper(), fasta_file[1].upper()
+			s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
 		except:
 			raise ValueError("Invalid input. See .__doc__")
 	
 
+	if len(s1) > len(s2):
+		s, t = [i for i in s1], [j for j in s2]
+	else:
+		s, t = [i for i in s2], [j for j in s1]
 
+	longest = ''
+	subseqs = [frozenset(j) for j in [combinations(t, i) for i in range(1,len(t)+1)]] 
+	
+	
+	
+#t = [i for i in 'AACCTTGG']
+#for i in range(1, len(t)+1):
+#	for j in combinations(t, i):
+#		print(j)
 
-
-
+t = longest_common_subseq('lsq.txt')
+print(t)
