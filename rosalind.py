@@ -1808,8 +1808,8 @@ def longest_common_subseq(fasta_file):
 	for i in range(2, len(t)+1):
 		print(i)
 		for motif in combinations(t, i): 
-			## Need to avoid the overhead 
-			## of spliced_motif function.
+			## Need to avoid the overheadof spliced_motif
+			## function (among other things).
 			if spliced_motif([s, motif]):
 				## Unnecessary to check this if we are always 
 				## increasing motif len
