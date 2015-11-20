@@ -1747,4 +1747,27 @@ def failure_array(string):
 	return f_arr
 
 
+def longest_common_subseq(fasta_file):
+
+	"""
+	fasta_file -> A fasta-formatted file containing two DNA strings.
+	              or an indexable container of two such strings.
+
+	Returns the longest common subsequence of the two strings.
+	Output is written to 'output_<fasta_file>'.
+	"""
+	
+	if os.path.isfile(fasta_file):
+		strings = [i[1] for i in fasta_read(fasta_file)[:2]]
+		s, t = strings[0], strings[1]
+	else:
+		try:
+			s, t = fasta_file[0].upper(), fasta_file[1].upper()
+		except:
+			raise ValueError("Invalid input. See .__doc__")
+	
+
+
+
+
 
