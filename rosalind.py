@@ -1455,7 +1455,11 @@ def shortest_superstring(fasta_file):
 	return reads[0]
 
 
-def spliced_motif(fasta_file, zero_based = True):
+
+## Implement the input_type parameter to skip type checking to speed up repetitive
+## calls to the function. 
+
+def spliced_motif(fasta_file, zero_based = True, input_type = None):
 
 	"""
 	fasta_file -> A fasta-formatted file containing two strings; the first
@@ -1468,16 +1472,21 @@ def spliced_motif(fasta_file, zero_based = True):
 
 	If zero_based is True, indices returned are 0-based, else 1-based.
 	"""
-	
-	if os.path.isfile(fasta_file):
-		with open(fasta_file, 'r') as f:
-			data = [t[1] for t in fasta_read(fasta_file)]
-			d = data[0]
-			motif = data[1]
+
+	if type(fasta_file) == str:
+		f_out = True
+		if os.path.isfile(fasta_file):
+			with open(fasta_file, 'r') as f:
+				data = [t[1] for t in fasta_read(fasta_file)]
+				d = data[0]
+				motif = data[1]
+		else:
+			raise ValueError("Invalid input. See .__doc__")
 	else:
+		f_out = False
 		try:
-			d = fasta_file[0].upper()
-			motif = fasta_file[1].upper()
+			d = fasta_file[0]
+			motif = fasta_file[1]
 		except:
 			raise ValueError("Invalid input parameter. See docstring.")
 
@@ -1488,14 +1497,17 @@ def spliced_motif(fasta_file, zero_based = True):
 			locations += [dna_index]
 			motif_index += 1
 		dna_index += 1
-	
-	if not zero_based:
-		locations = [i+1 for i in locations]
-	with open('output_{}'.format(fasta_file), 'w') as fout:
-		for i in locations:
-			fout.write('{} '.format(i))
-	return locations
 
+	if len(locations) == len(motif):
+		if not zero_based:
+			locations = [i+1 for i in locations]
+		if f_out:
+			with open('output_{}'.format(fasta_file), 'w') as fout:
+				for i in locations:
+					fout.write('{} '.format(i))
+		return locations
+	else:
+		return None
 
 def is_purine(nucleobase):
 	"Returns True if nucleobase is a purine, else False."
@@ -1779,8 +1791,13 @@ def longest_common_subseq(fasta_file):
 		s, t = [i for i in s2], [j for j in s1]
 
 	longest = ''
-	subseqs = [frozenset(j) for j in [combinations(t, i) for i in range(1,len(t)+1)]] 
 	
+	for i in range(1, len(t)+1):
+		for motif in combinations(t, i): #ORDERED_SET=TRUE <-Implement this
+			if len(spliced_motif([s, motif])) == len(motif):
+				longest = motif
+				break
+	return longest
 	
 	
 #t = [i for i in 'AACCTTGG']
@@ -1788,5 +1805,6 @@ def longest_common_subseq(fasta_file):
 #	for j in combinations(t, i):
 #		print(j)
 
-t = longest_common_subseq('lsq.txt')
-print(t)
+#t = longest_common_subseq('lsq.txt')
+#print(t)
+
