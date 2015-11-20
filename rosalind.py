@@ -1458,8 +1458,10 @@ def shortest_superstring(fasta_file):
 
 ## Implement the input_type parameter to skip type checking to speed up repetitive
 ## calls to the function. 
+## All the type checking and subsequent control flows make this more laggy than
+## it ought to be.
 
-def spliced_motif(fasta_file, zero_based = True, input_type = None):
+def spliced_motif(fasta_file, zero_based = True):
 
 	"""
 	fasta_file -> A fasta-formatted file containing two strings; the first
@@ -1508,6 +1510,7 @@ def spliced_motif(fasta_file, zero_based = True, input_type = None):
 		return locations
 	else:
 		return None
+
 
 def is_purine(nucleobase):
 	"Returns True if nucleobase is a purine, else False."
@@ -1791,20 +1794,31 @@ def longest_common_subseq(fasta_file):
 		s, t = [i for i in s2], [j for j in s1]
 
 	longest = ''
-	
-	for i in range(1, len(t)+1):
-		for motif in combinations(t, i): #ORDERED_SET=TRUE <-Implement this
-			if len(spliced_motif([s, motif])) == len(motif):
+	## Consider building a list of already-encountered
+	## subseqeuences. If we find that a subseq of length
+	## n is a common subseq then, when increasing 
+	## check-length to n+1, if the n+1_th item is a 1-symbol 
+	## extension of some length-n common subseq, then to 
+	## very the commonality of this length-n+1 subseq, we 
+	## only need to search that the added symbol lies to 
+	## the right of where the n_th symbol is found. 
+	## (Could use spliced_motif technique for this)
+	encountered = []
+
+	for i in range(2, len(t)+1):
+		print(i)
+		for motif in combinations(t, i): 
+			## Need to avoid the overhead 
+			## of spliced_motif function.
+			if spliced_motif([s, motif]):
+				## Unnecessary to check this if we are always 
+				## increasing motif len
+				#if len(motif) > len(longest): 
 				longest = motif
 				break
 	return longest
 	
 	
-#t = [i for i in 'AACCTTGG']
-#for i in range(1, len(t)+1):
-#	for j in combinations(t, i):
-#		print(j)
-
-#t = longest_common_subseq('lsq.txt')
-#print(t)
+t = longest_common_subseq('lcsq.txt')
+print(t)
 
