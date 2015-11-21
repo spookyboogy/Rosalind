@@ -1870,5 +1870,25 @@ def longest_common_subseq(fasta_file):
 	#seq = rec_lng_subseq(s, t)[::-1]
 
 
+def lex_sort_strings(alphabet, n):
+
+	"""
+	alphabet -> A list or string containing/defining an ordered alphabet.
+	n -> A non-negative integer less than the length of alphabet.
+
+	Returns all strings of length at most n formed from alphabet,
+	ordered lexicographically.
+	Output is written to 'ouput_<n>_lex_sort.txt'.
+	"""
+
+	if not type(alphabet) in [str, list]:
+		raise ValueError("Alphabet must be of type string or list.")
+	elif not (type(n) == int and n > 0  and n < len(alphabet)):
+		raise ValueError(print(lex_sort_strings.__doc__))
+
+	pass
+
+
+
 
 
