@@ -1815,7 +1815,6 @@ def longest_common_subseq(fasta_file):
 		s, t = s2, s1
 
 	Arr = [[0 for j in range(len(t)+1)] for i in range(len(s)+1)]
-
 	for i in range(len(s)):
 		for j in range(len(t)):
 			if s[i] == t[j]:
@@ -1823,7 +1822,19 @@ def longest_common_subseq(fasta_file):
 			else:
 				Arr[i+1][j+1] = max(Arr[i+1][j], Arr[i][j+1])
 	
+	seq = ''
 	i, j = len(s), len(t)
+	while i*j != 0:
+		if Arr[i][j] == Arr[i-1][j]:
+			i -= 1
+		elif Arr[i][j] == Arr[i][j-1]:
+			j -= 1
+		else:
+			seq += s[i-1]
+			i -= 1
+			j -= 1
+	
+	return seq		
 
 	if f_out:
 		with open('ouput_{}'.format(fasta_file), 'w') as fout:
@@ -1858,11 +1869,6 @@ def longest_common_subseq(fasta_file):
 	#		memoire[s,t] = seq
 	#		return seq
 	#seq = rec_lng_subseq(s, t)[::-1]
-
-
-
-t = longest_common_subseq('lsq.txt')
-print(t)
 
 
 
