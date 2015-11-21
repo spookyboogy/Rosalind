@@ -1799,46 +1799,71 @@ def longest_common_subseq(fasta_file):
 	"""
 	
 	if os.path.isfile(fasta_file):
+		f_out = True
 		strings = [i[1] for i in fasta_read(fasta_file)[:2]]
 		s1, s2 = strings[0], strings[1]
 	else:
+		f_out = False
 		try:
 			s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
 		except:
 			raise ValueError("Invalid input. See .__doc__")
 	
-
 	if len(s1) > len(s2):
 		s, t = s1, s2
 	else:
 		s, t = s2, s1
 
-	longest = ''
-	## Consider building a list of already-encountered
-	## subseqeuences. If we find that a subseq of length
-	## n is a common subseq then, when increasing 
-	## check-length to n+1, if the n+1_th item is a 1-symbol 
-	## extension of some length-n common subseq, then to 
-	## very the commonality of this length-n+1 subseq, we 
-	## only need to search that the added symbol lies to 
-	## the right of where the n_th symbol is found. 
-	## (Could use spliced_motif technique for this)
-	encountered = []
+	Arr = [[0 for j in range(len(t)+1)] for i in range(len(s)+1)]
 
-	for i in range(2, len(t)+1):
-		print(i)
-		for motif in combinations(t, i): 
-			## Need to avoid the overheadof spliced_motif
-			## function (among other things).
-			if is_subsequence(s, motif):
-				## Unnecessary to check this if we are always 
-				## increasing motif len
-				#if len(motif) > len(longest): 
-				longest = motif
-				break
-	return longest
+	for i in range(len(s)):
+		for j in range(len(t)):
+			if s[i] == t[j]:
+				Arr[i+1][j+1] = Arr[i][j] + 1
+			else:
+				Arr[i+1][j+1] = max(Arr[i+1][j], Arr[i][j+1])
 	
-	
-t = longest_common_subseq('lcsq.txt')
+	i, j = len(s), len(t)
+
+	if f_out:
+		with open('ouput_{}'.format(fasta_file), 'w') as fout:
+			fout.write(seq)
+	return seq
+
+	### Credit for version in use is due to mostly to the internet.
+	### Shitty version (credit:me) that takes too long on long strings:
+	#def rec_lng_subseq(s, t):
+	#
+	#	if len(s) == 0 or len(t) == 0:
+	#		return ''
+	#	elif len(s) == 1:
+	#		if s in t:
+	#			return s
+	#		else:
+	#			return ''
+	#	elif len(t) == 1:
+	#		if t in s:
+	#			return t
+	#		else:
+	#			return ''
+	#	else:
+	#		seq, seq1 = '', ''
+	#		if s[-1] == t[-1]:
+	#			seq += s[-1] + rec_lng_subseq(s[:-1], t[:-1])
+	#		else:
+	#			seq += rec_lng_subseq(s, t[:-1])
+	#			seq1 += rec_lng_subseq(s[:-1], t)
+	#	
+	#		seq = max([seq, seq1])
+	#		memoire[s,t] = seq
+	#		return seq
+	#seq = rec_lng_subseq(s, t)[::-1]
+
+
+
+t = longest_common_subseq('lsq.txt')
 print(t)
+
+
+
 
