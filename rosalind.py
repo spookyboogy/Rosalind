@@ -1833,9 +1833,8 @@ def longest_common_subseq(fasta_file):
 			seq += s[i-1]
 			i -= 1
 			j -= 1
+	seq = seq[::-1]
 	
-	return seq		
-
 	if f_out:
 		with open('ouput_{}'.format(fasta_file), 'w') as fout:
 			fout.write(seq)
