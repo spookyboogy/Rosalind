@@ -1886,7 +1886,9 @@ def lex_sort_strings(alphabet, n):
 	elif not (type(n) == int and n > 0  and n < len(alphabet)):
 		raise ValueError(print(lex_sort_strings.__doc__))
 
-	pass
+	perms = [lex_perms(alphabet, i) for i in range(1, n+1)]
+
+	print(perms)
 
 
 
