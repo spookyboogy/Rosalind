@@ -2015,7 +2015,14 @@ def distance_matrix(fasta_file):
 	return P
 	
 
+def sizeof_powerset(n):
 
+	"""
+	Returns the size of the powerset of the first n positive integers
+	module 1,000,000.
+	"""
+
+	return (2 ** n) % int(1E6)
 
 
 
