@@ -1961,7 +1961,6 @@ def lex_sort_strings(alphabet, n):
 
 	ranks = [0]*len(perms)
 	ordered = [0]*len(ranks)
-
 	for i in range(len(perms)):
 		rank = 0
 		for j in range(len(perms)):
@@ -2000,7 +1999,6 @@ def distance_matrix(fasta_file):
 
 	P = [[0 for j in range(len(data))] for i in range(len(data))]
 
-
 	for i in range(len(data)):
 		s1 = data[i]
 		for j in range(i):
@@ -2016,7 +2014,6 @@ def distance_matrix(fasta_file):
 			fout.write('\n')
 	return P
 	
-
 
 
 
