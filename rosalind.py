@@ -1982,6 +1982,43 @@ def lex_sort_strings(alphabet, n):
 	return ordered
 
 
+def distance_matrix(fasta_file):
+
+	"""
+	fasta_file -> A fasta-formatted file containing dna Strings
+	              of equal length.
+
+	Returns a matrix P where Pij is the p distance between the
+	i_th and j_th given string.
+	Output is written to 'output_<fasta_file>'.
+	"""
+
+	if os.path.isfile(fasta_file):
+		data = [i[1] for i in fasta_read(fasta_file)]
+	else:
+		raise ValueError(print(distance_matrix.__doc__))
+
+	P = [[0 for j in range(len(data))] for i in range(len(data))]
+
+
+	for i in range(len(data)):
+		s1 = data[i]
+		for j in range(i):
+			s2 = data[j]
+			p_dist = sum((s1[c] != s2[c]) for c in range(len(s1)))
+			p_dist = p_dist / len(s1)
+			P[i][j], P[j][i] = p_dist, p_dist
+
+	with open('output_{}'.format(fasta_file), 'w') as fout:
+		for i in P:
+			for j in i:
+				fout.write('{} '.format(j))
+			fout.write('\n')
+	return P
+	
+
+
+
 
 
 
