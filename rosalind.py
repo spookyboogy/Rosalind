@@ -1925,11 +1925,12 @@ def longest_common_subseq(fasta_file):
 #			fout.write('{}\n'.format(i))
 #	return ordered
 
-## This ranking algorithm can solve the worst case input in 
-## 5 minutes or so, which much better than the above, but
-## there is a yet-quicker way about this abusing the nature
-## of itertools.product. It's worth learning how to construct 
-## from scratch the fastest algorithm at solving this.
+
+## The following ranking algorithm can solve the worst case input in 
+## 5 minutes or so, which much better than the above, but there is a
+## yet-quicker way about this abusing the nature of itertools.product.
+## It's worth learning how to construct from scratch the fastest
+## algorithm at solving this.
 def lex_sort_strings(alphabet, n):
 
 	"""
@@ -1962,13 +1963,11 @@ def lex_sort_strings(alphabet, n):
 	ordered = [0]*len(ranks)
 
 	for i in range(len(perms)):
-		s = perms[i]
 		rank = 0
 		for j in range(len(perms)):
-			t = perms[j]
 			for c in range(n):
-				if s[c] != t[c]:
-					if alph.index(s[c]) > alph.index(t[c]):
+				if perms[i][c] != perms[j][c]:
+					if alph.index(perms[i][c]) > alph.index(perms[j][c]):
 						rank += 1
 					break
 		ranks[i] = rank
@@ -1981,6 +1980,12 @@ def lex_sort_strings(alphabet, n):
 		for i in ordered:
 			fout.write('{}\n'.format(i))
 	return ordered
+
+
+
+
+
+
 
 
 
