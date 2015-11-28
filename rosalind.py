@@ -2041,8 +2041,15 @@ def reversal_distance(seq_file):
 	Output is written to 'output_<seq_file>'.
 	"""
 
-	pass
+	if os.path.isfile(seq_file):
+		f = open(seq_file).readlines()
+		f = [i.strip('\n') for i in f if i not in ['', '\n']]
+		seqs = [[f[i], f[i+1]] for i in range(0, len(f), 2)]
+	else:
+		raise ValueError(print('Invalid input\n{}'
+			                    .format(reversal_distance.__doc__)))
 
+	
 
 
 
