@@ -2019,13 +2019,29 @@ def sizeof_powerset(n):
 
 	"""
 	Returns the size of the powerset of the first n positive integers
-	module 1,000,000.
+	modulo 1,000,000.
 	"""
 
 	return (2 ** n) % int(1E6)
 
 
+def reversal_distance(seq_file):
 
+	"""
+	seq_file -> A file containing eqaul-length sequence pairs formatted
+	            as follows:
+	                s e q 1
+	                s e q 2
+
+	                s e q 3
+	                s e q 4
+	                ...
+
+	Returns the reversal distances of each seqeuence pair.
+	Output is written to 'output_<seq_file>'.
+	"""
+
+	pass
 
 
 
