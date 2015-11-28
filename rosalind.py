@@ -3,8 +3,9 @@
 
 import os
 import operator
-from math import log10, floor, ceil, factorial as fact
+from itertools import product
 from urllib.request import urlopen
+from math import log10, floor, ceil, factorial as fact
 from collections import OrderedDict as Dict #dict is non-ordered
 
 rna_codons = {
@@ -1870,6 +1871,65 @@ def longest_common_subseq(fasta_file):
 	#seq = rec_lng_subseq(s, t)[::-1]
 
 
+#def lex_sort_strings_slow(alphabet, n):
+#
+#	"""
+#	alphabet -> A list or string containing/defining an ordered alphabet.
+#	n -> A non-negative integer less than or equal to the length
+#	     of alphabet.
+#
+#	Returns all strings of length at most n formed from alphabet, ordered 
+#	lexicographically.
+#	Output is written to 'ouput_<n>_lex_sort.txt'.
+#	"""
+#
+#	if not type(alphabet) in [str, list]:
+#		raise ValueError("Alphabet must be of type string or list.")
+#	elif not (type(n) == int and n > 0  and n <= len(alphabet)):
+#		raise ValueError(print(lex_sort_strings.__doc__))
+#
+#	alph = [' '] + [i for i in alphabet]
+#	
+#	llperms = [lex_perms(alphabet, i) for i in range(1, len(alphabet)+1)]
+#	lperms, perms = [], []
+#	for i in llperms:
+#		for j in i:
+#			lperms += [j]
+#	for i in lperms:
+#		s = ''.join(j for j in i)
+#		while len(s) < n:
+#			s += ' '
+#		perms += [s]
+#
+#	ranks = [0]*len(perms)
+#	ordered = [0]*len(ranks)
+#
+#	for i in range(len(perms)):
+#		s = perms[i]
+#		rank = 0
+#		for j in range(len(perms)):
+#			t = perms[j]
+#			for c in range(n):
+#				if s[c] != t[c]:
+#					if alph.index(s[c]) > alph.index(t[c]):
+#						rank += 1
+#					break
+#		ranks[i] = rank
+#
+#	for i in range(len(ranks)):
+#		place = ranks[i]
+#		ordered[place] = perms[i].strip(' ')
+#
+#	with open('output_{}_lex_perms'.format(n), 'w') as fout:
+#		for i in ordered:
+#			fout.write('{}\n'.format(i))
+#	return ordered
+
+## This ranking algorithm can solve the worst case input in 
+## 5 minutes or so, which much better than the above, but
+## there is a yet-quicker way about this abusing the nature
+## of itertools.product. It's worth learning how to construct 
+## from scratch the fastest algorithm at solving this.
 def lex_sort_strings(alphabet, n):
 
 	"""
@@ -1888,17 +1948,15 @@ def lex_sort_strings(alphabet, n):
 		raise ValueError(print(lex_sort_strings.__doc__))
 
 	alph = [' '] + [i for i in alphabet]
-	
-	llperms = [lex_perms(alphabet, i) for i in range(1, len(alphabet)+1)]
-	lperms, perms = [], []
-	for i in llperms:
+	pperms = [list(product(alphabet, repeat = i) for i in range(1,n+1))]
+	perms = []
+	for i in pperms:
 		for j in i:
-			lperms += [j]
-	for i in lperms:
-		s = ''.join(j for j in i)
-		while len(s) < n:
-			s += ' '
-		perms += [s]
+			for k in j:
+				s = ''.join(c for c in k)
+				while len(s) < n:
+					s += ' '
+				perms += [s]
 
 	ranks = [0]*len(perms)
 	ordered = [0]*len(ranks)
@@ -1926,3 +1984,15 @@ def lex_sort_strings(alphabet, n):
 
 
 
+
+
+
+###################################
+############ To Do ################
+###################################
+##
+## Learn how itertools.product is
+##+ so fast.
+##
+## Optimize, refactor, etc.
+##
