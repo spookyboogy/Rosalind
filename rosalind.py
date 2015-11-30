@@ -2047,10 +2047,28 @@ def reversal_distance(seq_file):
 		f = [[int(i) for i in j] for j in f]
 		pairs = [(f[i], f[i+1]) for i in range(0, len(f), 2)]
 	else:
-		raise ValueError(print('Invalid input\n{}'
-			                    .format(reversal_distance.__doc__)))
+		raise ValueError('Argument must be a valid file.\n{}'
+			             .format(reversal_distance.__doc__))
 
-	return pairs
+	distances = []
+
+	for pair in pairs:
+		revs = 0
+		s1, s2 = pair[0], pair[1]
+		print('\n{}\n{}'.format(s1, s2))
+		for i in range(len(s1)):
+			c = s1[i]
+			if s2 == s1:
+				distances += [revs]
+				break
+			else:
+				loc = s2.index(c)
+				s2 = s2[:i] + s2[i:loc+1][::-1] + s2[loc+1:]
+				revs += 1
+			print(s2)
+
+	return distances
+
 
 
 
@@ -2062,8 +2080,10 @@ def reversal_distance(seq_file):
 ############ To Do ################
 ###################################
 ##
-## Learn how itertools.product is
+##  Learn how itertools.product is
 ##+ so fast.
 ##
-## Optimize, refactor, etc.
+##  Optimize, refactor, etc.
 ##
+##
+###################################
