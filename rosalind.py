@@ -2050,29 +2050,41 @@ def reversal_distance(seq_file):
 		raise ValueError('Argument must be a valid file.\n{}'
 			             .format(reversal_distance.__doc__))
 
-	distances = []
+	def breakpoints(a):
+		'Returns a list of breakpoint indices of a.'
 
-	for pair in pairs:
-		revs = 0
-		s1, s2 = pair[0], pair[1]
-		print('\n{}\n{}'.format(s1, s2))
-		for i in range(len(s1)):
-			c = s1[i]
-			if s2 == s1:
-				distances += [revs]
-				break
-			else:
-				loc = s2.index(c)
-				s2 = s2[:i] + s2[i:loc+1][::-1] + s2[loc+1:]
-				revs += 1
-			print(s2)
+		b = []
+		for i in range(len(a)-1):
+			if abs(a[i] - a[i+1]) != 1:
+				b += [i]
+		return b
 
-	return distances
+	def inverse_perm(a):
+		'Returns the inverse permutation of a.'
+
+		perm = [0]*len(a)
+		for i in range(len(a)):
+			perm[a[a[i] - 1] - 1] = a[i]
+		return perm
+
+	def apply_permutation(a, b):
+		'Applies permutation b to a.'
+
+		return [a[i-1] for i in b]
+		
+	## Finding the reversal distance between a and b
+	## is the same as finding the distance between
+	## b^-1 * a and the identity permutation.
+	inv_b = inverse_perm(b)
+	pi = apply_permutation(inv_b, a)
+
+	breaks = breakpoints(pi)
+	break_count = len(breaks)
 
 
+	
 
-
-
+		
 
 
 
