@@ -49,11 +49,11 @@ dna_codons = {
 prot_mass_table = {
 	'water' : 18.01056,
 	'A' : 71.03711 , 'C' : 103.00919, 'D' : 115.02694,
-	'E' : 129.04259, 'F' : 147.06841, 'G' : 57.02146 , 
-	'H' : 137.05891, 'I' : 113.08406, 'K' : 128.09496, 
-	'L' : 113.08406, 'M' : 131.04049, 'N' : 114.04293, 
+	'E' : 129.04259, 'F' : 147.06841, 'G' : 57.02146 ,
+	'H' : 137.05891, 'I' : 113.08406, 'K' : 128.09496,
+	'L' : 113.08406, 'M' : 131.04049, 'N' : 114.04293,
 	'P' : 97.05276 , 'Q' : 128.05858, 'R' : 156.10111,
-	'S' : 87.03203 , 'T' : 101.04768, 'V' : 99.06841 , 
+	'S' : 87.03203 , 'T' : 101.04768, 'V' : 99.06841 ,
 	'W' : 186.07931, 'Y' : 163.06333 }
 
 
@@ -64,7 +64,7 @@ def nucleotide_count(string):
 
 	Returns the count of the number of appearances of each nucleotide.
 	"""
-	
+
 	s = string = string.upper()
 
 	dna = ['A', 'C', 'G', 'T']; rna = ['A', 'C', 'G', 'U']
@@ -74,7 +74,7 @@ def nucleotide_count(string):
 		g, t = s.count("G"), s.count("T")
 		return a, c, g, t
 	elif list(set(string)) == list(set(rna)):
-		a, c = s.count("A"), s.count("C") 
+		a, c = s.count("A"), s.count("C")
 		g, u = s.count("G"), s.count("U")
 		return a, c, g, u
 	else:
@@ -103,7 +103,7 @@ def dna_to_rna(dna_string):
 			r += "U"
 		else:
 			r += nt
-	
+
 	if f_out:
 		with open("output_{}".format(dna_string), 'w') as fout:
 			fout.write(r)
@@ -131,7 +131,7 @@ def fasta_read(fasta_file, names = True):
 	"""
 
 	#names option not implemented yet
-	
+
 	f = fasta_file
 	if not os.path.isfile(f):
 		raise ValueError("Invalid file")
@@ -146,9 +146,9 @@ def fasta_read(fasta_file, names = True):
 		name = entry[:entry.index('\n')]
 		dna = entry[entry.index('\n') + 1:]
 		l[i] = tuple([name, dna.replace('\n', '')])
-	
-	return l	
-	
+
+	return l
+
 
 def gc_content(fasta_file):
 
@@ -158,20 +158,20 @@ def gc_content(fasta_file):
 	greatest GC-content, ie the percentage of a given DNA string
 	consiting of either G or C.
 	"""
-	
+
 	l = fasta_read(fasta_file)
-	
+
 	max_gc = 0
 	max_entry = None
 
 	for tup in l:
-			
+
 		s = tup[1]
 		gc = 100 * ((s.count("C") + s.count("G")) / len(s))
 		if gc > max_gc:
 			max_gc = gc
-			max_entry = tup[0] 
-	
+			max_entry = tup[0]
+
 	print("\n{}\n{}\n".format(max_entry, max_gc))
 
 
@@ -185,7 +185,7 @@ def hamm(s, t):
 
 	if len(s) != len(t):
 		raise ValueError("Strings should be the same length")
-	
+
 	return sum((s[i] != t[i]) for i in range(len(s)))
 
 
@@ -199,30 +199,30 @@ def rabbits(n, m = 0, k = 1):
 	that we start with 1 pair, k rabbit pairs are produced
 	each generation and each rabbit pair may reproduce after 1 month
 	of being born.
-	"""	
+	"""
 
 	def real_rabbits(n, k = 1):
 
 		"""
-		Could be extended to account for death or to 
+		Could be extended to account for death or to
 		simulate population growth when rabbits don't stick in
 		pairs or whatever. Too memory intesive for large populations.
 		"""
 
 		class rabbit_pair:
-			
+
 			def __init__(self):
-				
+
 				self.age = 0
 				self.mature = 0
 				#self.gender = gender //for single-rabbit class
-			
+
 			def envejecer(self):
-				
+
 				self.age += 1
 				if self.age > 0:
 					self.mature = 1
-			
+
 			def reproduce(self, pairs = 3):
 
 				if self.mature:
@@ -232,22 +232,22 @@ def rabbits(n, m = 0, k = 1):
 
 
 		population = [rabbit_pair()]
-		
+
 		for i in range(1, n+1):
-			
+
 			print("\nMonth = {}, pop = {}".format(i, len(population)))
 			offspring = []
-			
+
 			for rabbit in population:
-					
+
 				litter = rabbit.reproduce(pairs = k)
-				offspring += [i for i in litter if i != None] 
-				rabbit.envejecer()	
+				offspring += [i for i in litter if i != None]
+				rabbit.envejecer()
 				if rabbit.age == m:
 					population.remove(rabbit)
 
 			population += offspring
-			
+
 		return len(population)
 
 
@@ -260,17 +260,17 @@ def rabbits(n, m = 0, k = 1):
 		population = ['r']
 
 		for i in range(1, n):
-			print("i = {}, pop = {}".format(i, len(population)))	
+			print("i = {}, pop = {}".format(i, len(population)))
 			offspring = []
-		
+
 			for i in range(len(population)):
 				if population[i] == 'r':
 					population[i] = 'R'
 				else:
 					offspring += k * ['r']
-			
+
 			population += offspring
-		
+
 		return len(population)
 
 
@@ -296,23 +296,23 @@ def rabbits(n, m = 0, k = 1):
 					s += [s[i] + s[i-1] - s[i-m]]
 				i += 1
 			return s[-1]
-	
+
 	return math_rabbits(n, m, k)
 
 
 def dominance_prb(k, m, n):
 
 	"""
-	k -> Number of homozygous dominant individuals 
+	k -> Number of homozygous dominant individuals
 	m -> Number heterozygous individuals
 	n -> Number homozygous recessive individuals
 
-	Returns the probability that two randomly selected mates will 
-	produce an individual possessing a dominant allele (and thus 
+	Returns the probability that two randomly selected mates will
+	produce an individual possessing a dominant allele (and thus
 	displaying the dominant phenotype). Assume that any two organisms
 	can mate.
 	"""
-	
+
 	def dom_prob(g1, g2):
 
 		if g1 in k or g2 in k:
@@ -320,9 +320,9 @@ def dominance_prb(k, m, n):
 		elif g1 in m:
 			if g2 in m:
 				return .75
-			else: 
+			else:
 				return .5
-		else: 
+		else:
 			if g2 in m:
 				return .5
 			else:
@@ -330,28 +330,28 @@ def dominance_prb(k, m, n):
 
 	k = ["AA" for i in range(k)]
 	m = ["Aa" for i in range(m)]
-	n = ["aa" for i in range(n)]	
-	
+	n = ["aa" for i in range(n)]
+
 	tot = len(k) + len(m) + len(n)
-	
+
 	prbmm = (len(m)/tot)*((len(m)-1)/(tot-1))
 	prbmn = (len(m)/tot)*(len(n)/(tot-1))
 	prbnn = (len(n)/tot)*((len(n)-1)/(tot-1))
-	
+
 	prb_nodom_mm = prbmm * (1-(dom_prob(m[0], m[0])))
 	prb_nodom_mn = prbmn * (1-(dom_prob(m[0], n[0])))
 	prb_nodom_nn = prbnn * (1-(dom_prob(n[0], n[0])))
-	
+
 	return 1 - (prb_nodom_mm + 2*(prb_nodom_mn) + prb_nodom_nn)
 
 
 def rna_to_prot(rna_string):
-	
+
 	"""
-	Takes a string of RNA nt's and returns the 
+	Takes a string of RNA nt's and returns the
 	protein for which it encodes.
 	"""
-	
+
 	r = rna_string = rna_string.upper()
 	p = ''
 
@@ -361,7 +361,7 @@ def rna_to_prot(rna_string):
 			p += ' '
 			continue
 		p += rna_codons[s]
-	
+
 	print(len(r))
 	return p
 
@@ -384,7 +384,7 @@ def subs(string, substring, zero_based = True):
 			else:
 				indexes += [i+1]
 
-	return indexes 
+	return indexes
 
 
 def cons(fasta_file):
@@ -401,7 +401,7 @@ def cons(fasta_file):
 		  J = m, the length of the given strings
 		  P_ij = the total count of occurences of the i_th distinct
 		  	     symbol (eg A) amongst the j_th index of the given
-		  	     strings. 
+		  	     strings.
 	Consensus String:
 		A genetic string g where g[i] is the nucleotide which appeared
 		most frequently at the i_th indexes of the given strings.
@@ -410,8 +410,8 @@ def cons(fasta_file):
 	string_entries = fasta_read(fasta_file)
 	data_matrix = []
 	for i in range(len(string_entries)):
-		data_matrix += [string_entries[i][1]]	
-	
+		data_matrix += [string_entries[i][1]]
+
 	Sym_set = []
 	for i in range(len(data_matrix)):
 		Sym_set += list(set(data_matrix[i]))
@@ -419,16 +419,16 @@ def cons(fasta_file):
 
 	p = {i : [] for i in Sym_set}
 	consensus = ''
-	
+
 	length = min((len(i) for i in data_matrix))
 	if length != max((len(i) for i in data_matrix)):
 		print("Strings aren't of same length as they should be.")
 
-	for j in range(length):	
+	for j in range(length):
 		col = [i[j] for i in data_matrix]
 		for key in p.keys():
 			p[key] += [col.count(key)]
-	
+
 	for j in range(length):
 		cons_sym = ''
 		max_freq = 0
@@ -438,9 +438,9 @@ def cons(fasta_file):
 				cons_sym = i[0]
 		consensus += cons_sym
 
-	p_syms_ordered = sorted(p, key = lambda entry: entry[0])	
-	
-	with open("output_{}".format(fasta_file), 'w') as fout: 
+	p_syms_ordered = sorted(p, key = lambda entry: entry[0])
+
+	with open("output_{}".format(fasta_file), 'w') as fout:
 		print(consensus)
 		fout.write("{}\n".format(consensus))
 		for sym in p_syms_ordered:
@@ -451,14 +451,14 @@ def cons(fasta_file):
 				fout.write("{} ".format(i))
 			print()
 			fout.write("\n")
-		
+
 
 def overlap_graph(fasta_file):
 
 	"""
 	Takes a fasta_file containing DNA strings and prints the
 	adjacency list corresponding to O_3, ie the overlap graph
-	of the strings where overlaps are at least 3 nucleotides long. 
+	of the strings where overlaps are at least 3 nucleotides long.
 	(Also writes an output file for easy keeping)
 	"""
 
@@ -466,12 +466,12 @@ def overlap_graph(fasta_file):
 	k = 3
 	directions = {}
 
-	for tail in data: 
-		suffix = tail[1][-k:] 
+	for tail in data:
+		suffix = tail[1][-k:]
 		overlaps = []
-		for head in data:		
+		for head in data:
 			prefix = head[1][:k]
-			if suffix == prefix: 
+			if suffix == prefix:
 				if head[0] != tail[0]:
 					overlaps += [head[0]]
 		if len(overlaps) != 0:
@@ -493,7 +493,7 @@ def expected_offspring(AA_AA, AA_Aa, AA_aa, Aa_Aa, Aa_aa, aa_aa):
 	phenotype in the next generation, under the assumption that every
 	couple has exactly two offspring.
 	"""
-	
+
 	pairings = [AA_AA, AA_Aa, AA_aa, Aa_Aa, Aa_aa, aa_aa]
 	dom_prob = [1, 1, 1, .75, .5, 0]
 	EX = 0
@@ -529,7 +529,7 @@ def motif(fasta_file):
 					else:
 						common = False
 				if common:
-					if len(teststr) > len(lngst):	
+					if len(teststr) > len(lngst):
 						lngst = teststr
 					testlen += 1
 				else:
@@ -538,7 +538,7 @@ def motif(fasta_file):
 			longest = lngst
 	with open("output_" + fasta_file, 'w') as fout:
 		fout.write(longest)
-	return longest	
+	return longest
 
 
 def choose(n, k):
@@ -546,19 +546,19 @@ def choose(n, k):
 	return int(fact(n)/(fact(k)*fact(n-k)))
 
 def permute(n, k):
-	
+
 	return int(fact(n)/fact(n-k))
 
-	
+
 def ind_alleles(k, n):
 
 	"""
-	Given: A population starts at generation 0 with 
-		   1 organism of genotype AaBb. This organism and 
-		   all offspring mate with type AaBb, and have two 
+	Given: A population starts at generation 0 with
+		   1 organism of genotype AaBb. This organism and
+		   all offspring mate with type AaBb, and have two
 		   offspring.
 	Returns: The probability that n organisms of genotype
-			 AaBb will belong to the k_th generation. 
+			 AaBb will belong to the k_th generation.
 	"""
 
 	tot = 2**k
@@ -572,26 +572,26 @@ def motif_location(prot, motif = "N{P}[ST]{P}"):
 
 	"""
 	Takes a protein sequence and a protein sequence and
-	returns a list of the motif's locations within the 
+	returns a list of the motif's locations within the
 	protein, if any.
-	
+
 	Note: A motif (at least with respect to this program)
 		  is a definite-length protein sequence. Protein
-		  units enclosed in a '[]' indicate that anyone one of 
+		  units enclosed in a '[]' indicate that anyone one of
 		  the enclosed units can appear at that point. Units
 		  enclosed in a '{}' indicate that any protein unit
 		  NOT enclosed can appear at that point.
-	"""	
+	"""
 
 	def is_motif(string, motif = motif, get_motif_len = False):
-		
+
 		"""
 		Returns True if string accords with motif,
-		False otherwise. Currently does not check 
+		False otherwise. Currently does not check
 		input-validity.
 		"""
 
-		motif = motif.upper(); 
+		motif = motif.upper();
 		m = {}; i = 0; char_count = 0
 		while i < len(motif):
 			if motif[i] == '[':
@@ -615,19 +615,19 @@ def motif_location(prot, motif = "N{P}[ST]{P}"):
 		else:
 			s = string = string.upper()
 			if len(s) != len(m.keys()):
-				print("Motif and string not of equal length.") 
-				return			
+				print("Motif and string not of equal length.")
+				return
 			for i in range(len(s)):
 				if s[i] not in m[i]:
 					return False
 			return True
-	
-	locations = []	
+
+	locations = []
 	m_len = is_motif(None, motif, get_motif_len = True)
 	for i in range(len(prot) - m_len + 1):
 		if is_motif(prot[i:i+m_len], motif):
 			locations += [i+1]
-	return locations		
+	return locations
 
 
 def uniprot_get(uniprot_ID):
@@ -636,7 +636,7 @@ def uniprot_get(uniprot_ID):
 	uniprot_ID -> (string) Protein ID on uniprot.org
 
 	Fetches the amino acid sequence of the given protein from the
-	uniprot database. Returns a string. 
+	uniprot database. Returns a string.
 	"""
 
 	url = "http://www.uniprot.org/uniprot/{}.fasta".format(uniprot_ID)
@@ -687,17 +687,17 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 	locations = [motif_location(prot[1], motif=motif) for prot in prots]
 	if len(locations) != len(prots):
 		raise Exception("Something went wrong... Exiting...")
-	
+
 	for i in range(len(prots)):
-		results += [(prots[i][0], locations[i])] 
-	#results += [(prots[i][0], locations[i]) for i in range(len(prots))] 
+		results += [(prots[i][0], locations[i])]
+	#results += [(prots[i][0], locations[i]) for i in range(len(prots))]
 	results = [i for i in results if i[1] not in [[], '', None]]
-	
+
 	with open(fout_name, 'w') as fout:
 		for tup in results:
 			print(tup[0]); fout.write("{}\n".format(tup[0]))
 			for i in tup[1]:
-				print(i, end = ' '); fout.write("{} ".format(i)) 
+				print(i, end = ' '); fout.write("{} ".format(i))
 			print(); fout.write('\n')
 
 	return results
@@ -706,9 +706,9 @@ def motif_in_proteins(protein_IDs, motif = "N{P}[ST]{P}", fout = True):
 def num_mrna_from_prot(prot):
 
 	"""
-	prot -> Protein string or file containing protein 
-	
-	Returns n modulo 1,000,000, where n is the number of 
+	prot -> Protein string or file containing protein
+
+	Returns n modulo 1,000,000, where n is the number of
 	possible mrna strings which could encode the given protein.
 	"""
 
@@ -726,7 +726,7 @@ def num_mrna_from_prot(prot):
 			if rna_codons[key] == prot[i]:
 				inferences[i] += 1
 		count *= inferences[i]
-	
+
 	count *= 3 # Don't forget about the 3 possible stop codons
 	return count % int(1E6)
 
@@ -735,26 +735,26 @@ def reading_frames(dna_string, simple = True):
 
 	"""
 	dna_string -> A DNA string or a file containing one.
-	
-	Returns: If simple = True: 
+
+	Returns: If simple = True:
 				A list containing the reading 6 reading frames
 				pertaining to dna_string.
 			 If simple = False:
 				A list of two 3-tuples; the first containing the
-				5'-to-3' reading frames of dna_string, and the second 
+				5'-to-3' reading frames of dna_string, and the second
 				containing the 3'-to-5' reading frames of dna_string
 				(or vice-versa, depending on dna_string directionality.
 	"""
-	
+
 	if os.path.isfile(dna_string):
 		f = open(dna_string, 'r').read()
 		d = f.replace('\n', '')
 	else:
-		d = dna_string.upper()	
+		d = dna_string.upper()
 
 	reading_frames = []
 	d_c = reverse_compliment(d)
-	
+
 	for s in [d, d_c]:
 		frames = []
 		for shift in range(3):
@@ -768,20 +768,20 @@ def reading_frames(dna_string, simple = True):
 			reading_frames += frames
 		else:
 			reading_frames += tuple(frame for frame in frames)
-	
-	return reading_frames	
-			
+
+	return reading_frames
+
 
 def dna_to_proteins(dna_string):
 
 	"""
     dna_string -> A DNA string or a fasta file containing a
 				  DNA string.
-	
-	Returns every distinct candidate protein that can be translated 
-	from the Open Reading Frames of dna_string. 
+
+	Returns every distinct candidate protein that can be translated
+	from the Open Reading Frames of dna_string.
 	If a fasta file is provided, output is written to 'output_<filename>'.
-	""" 	
+	"""
 
 	if os.path.isfile(dna_string):
 		d = fasta_read(dna_string)[0][1]
@@ -810,21 +810,21 @@ def dna_to_proteins(dna_string):
 				prot += dna_codons[s[i:i+3]]
 			if prot and stop_found:
 				proteins += [prot]
-	
+
 	proteins = list(set(proteins))
 
 	if f_out:
 		with open('output_{}'.format(dna_string), 'w') as fout:
 			for prot in proteins:
 				fout.write("{}\n".format(prot))
-	
-	return proteins	
+
+	return proteins
 
 
 def permute(l):
 
 	"""
-	l -> list of set of (preferably) ordered numbers 
+	l -> list of set of (preferably) ordered numbers
 		 (or objects, I guess)
 
 	Returns the list of all permutations of l.
@@ -844,7 +844,7 @@ def permute(l):
 		return perms
 
 
-def permutations(n, f_out = True, give_total = False):
+def permutations(n, f_out=True, give_total=False):
 
 	"""
 	n -> Positive integer
@@ -854,13 +854,13 @@ def permutations(n, f_out = True, give_total = False):
 	of all such permuations.
 
 	If f_out is true, output is written to 'output_permuations.txt'.
-	If give_total is true, a tuple is returned, with the first element 
+	If give_total is true, a tuple is returned, with the first element
 	being the total number of permuations and the second element being
 	the list of permutations.
 	"""
 
 	total = fact(n)
-	perms = permute(list(range(1,n+1)))
+	perms = permute(list(range(1, n+1)))
 
 	if f_out:
 		with open('output_permuations.txt', 'w') as fout:
@@ -869,7 +869,7 @@ def permutations(n, f_out = True, give_total = False):
 				for i in perm:
 					fout.write('{} '.format(i))
 				fout.write('\n')
-	
+
 	if give_total:
 		return total, perms
 	else:
@@ -896,7 +896,7 @@ def protein_mass(protein_string):
 	return mass
 
 
-def reverse_palindromes(dna_string, zero_based = True):
+def reverse_palindromes(dna_string, zero_based=True):
 
 	"""
 	dna_string -> A DNA string or a fasta file containing one.
@@ -904,7 +904,7 @@ def reverse_palindromes(dna_string, zero_based = True):
 	Returns the position and length of every reverse palindrome in the
 	string having length between 4 and 12. (Related to restriction
 	enzymes)
-	
+
 	If a fasta file is provided, output is written to 'output_<fname>'.
 	"""
 
@@ -919,10 +919,10 @@ def reverse_palindromes(dna_string, zero_based = True):
 
 	for i in range(len(d) - 3):
 		for testlen in range(4, 13, 2):
-			a = d[ i : i + testlen ]
+			a = d[i : i + testlen]
 			if len(a) >= testlen:
 				b = reverse_compliment(a)
-				if a == b:	
+				if a == b:
 					if zero_based:
 						pals += [(i, testlen)]
 					else:
@@ -939,7 +939,7 @@ def dna_and_introns_to_protein(fasta_file):
 
 	"""
 	fasta_file -> A fasta file with the first entry being a DNA string d
-				  and the remaining entries being substrings of d 
+				  and the remaining entries being substrings of d
 				  acting as introns of d (which implies that the
 				  substrings should not overlap).
 
@@ -951,7 +951,7 @@ def dna_and_introns_to_protein(fasta_file):
 	#### Check that the intron positions and lengths don't overlap and
 	#### therefore produce valid exons.
 	#### Check that the exon string is evenly divisble by 3 and therefore
-	#### nicely transcribable. 
+	#### nicely transcribable.
 	#### Somehow allow for multiple dna strings to be processed.
 	#### Somehow account for UTR's.
 
@@ -959,15 +959,15 @@ def dna_and_introns_to_protein(fasta_file):
 
 	dna = dna_and_introns[0][1]
 	introns = [i[1] for i in dna_and_introns[1:]]
-	
-	coding_region, protein =  str(), str()
+
+	coding_region, protein = str(), str()
 	intron_intervals = []
 
 	for i in introns:
 		positions = subs(dna, i)
 		for pos in positions:
 			intron_intervals += [range(pos, pos + len(i))]
-	
+
 	for i in range(len(dna)):
 		is_exon_part = True
 		for rng in intron_intervals:
@@ -975,7 +975,7 @@ def dna_and_introns_to_protein(fasta_file):
 				is_exon_part = False
 		if is_exon_part:
 			coding_region += dna[i]
-	
+
 	for i in range(0, len(coding_region) - 2, 3):
 		s = coding_region[i:i+3]
 		try:
@@ -985,14 +985,14 @@ def dna_and_introns_to_protein(fasta_file):
 				protein += dna_codons[s]
 		except Exception as ex:
 			print(ex)
-		
+
 	with open('output_{}'.format(fasta_file), 'w') as fout:
 		fout.write(protein)
 	return protein
 
 
 def combinations(items, k, rep = False):
-	
+
 	"""
 	Returns a list of all combinations of length n of items.
 	If rep = True, reptititions of items are allowed.
@@ -1005,14 +1005,14 @@ def combinations(items, k, rep = False):
 		raise ValueError("n must be an integer.")
 
 	if k == 0:
-		return [] 
+		return []
 	elif k == 1:
 		return [[i] for i in items]
 	elif k > len(list(items)) and not rep:
-		return [] 
+		return []
 
 	combos = []
-	if not rep:	
+	if not rep:
 		for i in range(len(items) - k + 1):
 			head = [items[i]]
 			for tail in combinations(items[i+1:], k - 1):
@@ -1030,22 +1030,22 @@ def combinations(items, k, rep = False):
 def signed_combinations(n, k):
 
 	"""
-	n -> Positive integer 
+	n -> Positive integer
 	k -> Positive integer => n
-	
+
 	Returns a list of all k-combinations of the first n positive integers
 	including each integer negated. Does not include combinations like
-	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2. 
+	-1, 1 or 2, -2 nor repetitive combinations such as -1, -1 or 2, 2.
 	"""
-	
+
 	def rec_combine(l, k):
-		
+
 		"""
 		l -> List of range of integers
 
 		Recursively generates the signed k-combinations of l.
-		"""	
-		
+		"""
+
 		combinations = []
 		if len(l) == 0:
 			return []
@@ -1063,7 +1063,7 @@ def signed_combinations(n, k):
 
 	if type(n) != int or type(k) != int:
 		raise ValueError("n and k must be integers.")
-	elif n < k: 
+	elif n < k:
 		return []
 	else:
 		combinations = rec_combine(range(1, n+1), k)
@@ -1096,20 +1096,20 @@ def signed_permutations(n):
 				fout.write('{} '.format(j))
 			fout.write('\n')
 	return total, signed_perms
-				
-				
+
+
 def lex_perms(ordered_alphabet, n):
 
 	"""
 	ordered_alphabet -> A collection of symbols defining and ordered
 						alphabet.
-	n -> If n >= len(alphabet), all permutations 
-		 of ordered_alphabet are given in lexicographic order, as 
-		 defined by ordered_alphabet. 
-		 If n < len(alphabet), all permutations of length n are given 
+	n -> If n >= len(alphabet), all permutations
+		 of ordered_alphabet are given in lexicographic order, as
+		 defined by ordered_alphabet.
+		 If n < len(alphabet), all permutations of length n are given
 		 in lexicographic order.
 
-	Note: Includes permutations with repetitions. I have yet to (but 
+	Note: Includes permutations with repetitions. I have yet to (but
 		  should) implement non-repetition-including lex_perms.
 
 	Output is written to 'output_lex_perms.txt'.
@@ -1126,7 +1126,7 @@ def lex_perms(ordered_alphabet, n):
 		for i in range(len(alph)):
 			head = [alph[i]]
 			for tail in lex_perms(alph, n-1):
-				perms += [head + tail]	
+				perms += [head + tail]
 
 	#with open('output_lex_perms.txt', 'w') as fout:
 	#	for i in perms:
@@ -1137,36 +1137,33 @@ def lex_perms(ordered_alphabet, n):
 
 
 def has_perfect_matching(rna_string):
-	
+
 	"""
 	rna_string -> An rna string or a fasta file containing one.
 
 	Returns true if there exists a perfect match in rna_string,
 	else returns False.
 	"""
-	
+
 	if os.path.isfile(rna_string):
 		r = fasta_read(rna_string)[0][1]
 	else:
 		r = rna_string.upper()
-	
+
 	if len(r)%2 != 0:
 		return False
 	else:
-		if r.count('A')==r.count('U') and r.count('G')==r.count('C'):
-			return True
-		else:
-			return False
+		return r.count('A') == r.count('U') and r.count('G') == r.count('C')
 
 
 def perfect_match_count(rna_string):
 
 	"""
-	rna_string -> An rna string containing as many occurences of 
+	rna_string -> An rna string containing as many occurences of
 				  'A' as 'U' and as many occurences of 'G' as 'C'
 				  or a fasta file containing such a string.
 
-	Returns the number of possible perfect matchings in the bonding 
+	Returns the number of possible perfect matchings in the bonding
 	graph of rna_string.
 	"""
 
@@ -1177,8 +1174,8 @@ def perfect_match_count(rna_string):
 
 	if not has_perfect_matching(rna_string):
 		raise Exception("Unequal number of occurences of A-U or G-C.")
-	else:	
-		a_count, g_count = rna.count('A'), rna.count('G')	
+	else:
+		a_count, g_count = rna.count('A'), rna.count('G')
 		return fact(a_count)*fact(g_count)
 
 
@@ -1192,16 +1189,16 @@ def partial_perms_count(n, k):
 	of the first n positive integers modulo 1,000,000.
 	"""
 
-	a = choose(n,k)
+	a = choose(n, k)
 	b = fact(k)
 	return (a*b)%int(1E6)
 
 
 def recursive_LIS(sequence):
-	
+
 	"""
-	Takes an integer sequence or a file containing one and returns 
-	the longest increasing subsequence and the longest decreasing 
+	Takes an integer sequence or a file containing one and returns
+	the longest increasing subsequence and the longest decreasing
 	subsequence. If a file is given, it should be formatted as follows:
 
 	<Length of sequence>
@@ -1209,7 +1206,7 @@ def recursive_LIS(sequence):
 
 	Output is written to 'output_<fname>'
 	"""
-	
+
 	if type(sequence) == str:
 		if os.path.isfile(sequence):
 			f_out = True
@@ -1224,9 +1221,9 @@ def recursive_LIS(sequence):
 			raise ValueError("First arg must be an integer sequence.")
 
 	def rec_subseqs(seq):
-		
-		""" 
-		Takes a list of non-repeated integers and returns all 
+
+		"""
+		Takes a list of non-repeated integers and returns all
 		increasing subsequences in the list if inc = True, all
 		decreasing subsequences in the list if inc = False.
 		"""
@@ -1251,13 +1248,13 @@ def recursive_LIS(sequence):
 				for j in range(len(tails)):
 					for subseq in rec_subseqs(tails[j:]):
 						subseqs += [[head] + subseq]
-		return subseqs	
-	
+		return subseqs
+
 	max_inc, max_dec = [], []
 	for seq in rec_subseqs(s):
 		if len(seq) > len(max_inc):
 			max_inc = seq
-	for seq in rec_subseqs([-i for i in s]):	
+	for seq in rec_subseqs([-i for i in s]):
 		if len(seq) > len(max_dec):
 			max_dec = seq
 	max_dec = [-i for i in max_dec]
@@ -1274,8 +1271,8 @@ def recursive_LIS(sequence):
 def LIS(sequence):
 
 	"""
-	Takes an integer sequence or a file containing one and returns 
-	the longest increasing subsequence and the longest decreasing 
+	Takes an integer sequence or a file containing one and returns
+	the longest increasing subsequence and the longest decreasing
 	subsequence. If a file is given, it should be formatted as follows:
 
 	<Length of sequence>
@@ -1290,7 +1287,7 @@ def LIS(sequence):
 			with open(sequence, 'r') as f:
 				s = [int(i) for i in f.readlines()[1].split()]
 		else:
-			s = [int(i) for i in sequence] 
+			s = [int(i) for i in sequence]
 			f_out = False
 	else:
 		f_out = False
@@ -1300,7 +1297,7 @@ def LIS(sequence):
 			raise ValueError("First arg must be an integer sequence.")
 
 	def get_lis(s):
-			
+
 		lis = [[s[0]]]
 		for i in range(1, len(s)):
 			l_i = []
@@ -1330,7 +1327,7 @@ def LIS(sequence):
 					fout.write('{} '.format(i))
 				fout.write('\n')
 	return LIS, LDS
-		
+
 
 def edges_to_form_tree(graph_file):
 
@@ -1354,8 +1351,8 @@ def edges_to_form_tree(graph_file):
 			adj_list = [[int(j) for j in i.split()] for i in f[1:]]
 	else:
 		raise ValueError('Input must be a file. See docstring.')
-	
-	return n - len(adj_list) - 1	
+
+	return n - len(adj_list) - 1
 
 
 def strprob(input_file):
@@ -1399,10 +1396,10 @@ def shortest_superstring(fasta_file):
 	Takes a fasta_file containing DNA reads and returns the shortest
 	superstring containing all the given strings. For practical purposes,
 	this function is written on the assumption that there exists a unique
-	way to reconstruct the entire superstring from the reads by "gluing 
+	way to reconstruct the entire superstring from the reads by "gluing
 	together" pairs of reads that overlap by more than half their length.
 	"""
-	
+
 	if os.path.isfile(fasta_file):
 		reads = [i[1] for i in fasta_read(fasta_file)]
 	else:
@@ -1420,7 +1417,7 @@ def shortest_superstring(fasta_file):
 		for i in range(len(reads)):
 			for j in range(len(reads)):
 				if i == j: continue
-				
+
 				if len(reads[i]) <= len(reads[j]):
 					s1, s2 = reads[i], reads[j]
 				else:
@@ -1457,12 +1454,12 @@ def shortest_superstring(fasta_file):
 
 
 
-## Implement the input_type parameter to skip type checking to speed up repetitive
-## calls to the function. 
-## All the type checking and subsequent control flows make this more laggy than
-## it ought to be.
+## Implement the input_type parameter to skip type checking to speed up
+## repetitive calls to the function. All the type checking and subsequent
+## control flows make this more laggy
+## than it ought to be.
 
-def spliced_motif(fasta_file, zero_based = True):
+def spliced_motif(fasta_file, zero_based=True):
 
 	"""
 	fasta_file -> A fasta-formatted file containing two strings; the first
@@ -1470,7 +1467,7 @@ def spliced_motif(fasta_file, zero_based = True):
 			      a motif string. Also accepts an indexable container
 				  of two such strings.
 
-	Returns the indices of dna_string where motif occurs as a 
+	Returns the indices of dna_string where motif occurs as a
 	subsequence of dna_string. Does not return more than one occurrence.
 
 	If zero_based is True, indices returned are 0-based, else 1-based.
@@ -1526,24 +1523,21 @@ def is_subsequence(seq, subseq):
 		if seq[s_index] == subseq[ss_index]:
 			ss_index += 1
 		s_index += 1
-	
-	if ss_index == ss_len:
-		return True
-	else:
-		return False
+
+	return ss_index == ss_len
 
 
 def is_purine(nucleobase):
 	"Returns True if nucleobase is a purine, else False."
 
-	return True if nucleobase.upper() in ['A','G'] else False
-
+	return True if nucleobase.upper() in ['A', 'G'] else False
 
 def is_pyrimadine(nucleobase):
 	"Returns True if nucleobase is a pyrimadine, else False."
 
-	return True if nucleobase.upper() in ['C','T','U'] else False
-		
+	return True if nucleobase.upper() in ['C', 'T', 'U'] else False
+
+
 ## If this were a robust function it would give accurate ratios
 ## for both DNA and RNA.
 
@@ -1553,28 +1547,28 @@ def trans_tranv_ratio(fasta_file):
 	fasta_file -> A fasta-formatted file containing two DNA strings
 		          of equal length.
 
-	Returns the translation to transversion ratio between the 
+	Returns the translation to transversion ratio between the
 	two strings.
 	"""
-	
+
 	if os.path.isfile(fasta_file):
 		with open(fasta_file, 'r') as f:
 			data = [i[1] for i in fasta_read(fasta_file)]
 			s1, s2 = data[0], data[1]
 	else:
 		raise ValueError("Input must be a fasta file. See docstring.")
-	if not len(s1) == len(s2):
+	if len(s1) != len(s2):
 		raise ValueError("Input strings must be of equal length.")
-	
+
 	translations, transversions = int(), int()
 	for i in range(len(s1)):
-		if not s1[i] == s2[i]:
-			if sum([is_purine(s1[i]), is_purine(s2[i])]) in [0,2]:
+		if s1[i] != s2[i]:
+			if sum([is_purine(s1[i]), is_purine(s2[i])]) in [0, 2]:
 				translations += 1
 			else:
 				transversions += 1
 	R = translations/transversions
-	
+
 	with open('output_{}'.format(fasta_file), 'w') as fout:
 		fout.write(str(R))
 	return R
@@ -1585,7 +1579,7 @@ def max_matchings_count(rna_string):
 	"""
 	rna_stirng -> An RNA string or a fasta file containing one.
 
-	Returns the total possible number of maximum matchings of 
+	Returns the total possible number of maximum matchings of
 	basepair edges in the bonding graph of rna_string.
 	"""
 
@@ -1593,16 +1587,16 @@ def max_matchings_count(rna_string):
 		r = fasta_read(rna_string)[0][1].upper()
 	else:
 		r = rna_string.upper()
-	
+
 	a_count, u_count = r.count('A'), r.count('U')
 	g_count, c_count = r.count('G'), r.count('C')
 
 	pur_min, pur_max = min(a_count, u_count), max(a_count, u_count)
 	pyr_min, pyr_max = min(g_count, c_count), max(g_count, c_count)
 
-	matching_count  = fact(pur_min) * choose(pur_max, pur_min)
+	matching_count = fact(pur_min) * choose(pur_max, pur_min)
 	matching_count *= fact(pyr_min) * choose(pyr_max, pyr_min)
-	
+
 	return matching_count
 
 
@@ -1637,8 +1631,8 @@ def pncm_count(rna_string):
 		rna = rna_string.upper()
 
 	if not has_perfect_matching(rna_string):
-		return 0 
-	
+		return 0
+
 	bondings = {'A':'U', 'U':'A', 'G':'C', 'C':'G'}
 	encountered = {}
 
@@ -1651,21 +1645,21 @@ def pncm_count(rna_string):
 		else:
 			if rna in encountered:
 				return encountered[rna]
-	
-			pncm_count = 0
+
+			pncm = 0
 			for i in range(1, len(rna), 2):
 				if bondings[rna[0]] == rna[i]:
-					l, r = rna[1:i], rna[i+1:]	
+					l, r = rna[1:i], rna[i+1:]
 					if has_perfect_matching(l): #then so does r
 						l_count = rec_pncm_count(l)
 						r_count = rec_pncm_count(r)
-						pncm_count += l_count * r_count
+						pncm += l_count * r_count
 
-			encountered[rna] = pncm_count			
-			return pncm_count
-	
-	return rec_pncm_count(rna) % int(1E6)	
-	
+			encountered[rna] = pncm_count
+			return pncm
+
+	return rec_pncm_count(rna) % int(1E6)
+
 
 def inodes(n):
 
@@ -1689,10 +1683,10 @@ def corr(fasta_file):
 	                 - The read is incorrect and appears only once,
 	                   and has a hamming distance of 1 from exactly
 	                   one correct read in the set (or its reverse
-	                   complement).  
+	                   complement).
 
 	Returns a list of all read corrections (with 1 symbol substitution)
-	in the form: [old read]->[new read]. Output is written to 
+	in the form: [old read]->[new read]. Output is written to
 	'output_<fasta_file>'.
 	"""
 
@@ -1702,14 +1696,14 @@ def corr(fasta_file):
 		raise ValueError("Input must be a proper fasta file. See .__doc__")
 
 	corrections, correct_reads, incorrect_reads = [], [], []
-	
+
 	for i in reads:
 		if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
 			if i not in correct_reads:
 				correct_reads += [i]
 		else:
 			incorrect_reads += [i]
-	
+
 	for i in incorrect_reads:
 		for j in correct_reads:
 			if hamm(i,j) == 1:
@@ -1717,14 +1711,14 @@ def corr(fasta_file):
 			elif hamm(i, reverse_compliment(j)) == 1:
 				corrections += [(i, reverse_compliment(j))]
 
-	with open('output_{}'.format(fasta_file), 'w') as fout:	
+	with open('output_{}'.format(fasta_file), 'w') as fout:
 		for i in set(corrections):
 			fout.write('{}->{}\n'.format(i[0], i[1]))
 	return list(set(corrections))
 
 
 ## Needs a small refactoring to account for values of k other than 4.
-## Written in this dumb way using ordered dict because of failure of 
+## Written in this dumb way using ordered dict because of failure of
 ## 'AAAA'.count('AA'), for example. Should be 3 but gives 2.
 
 def k_mer_comp(dna_string):
@@ -1798,7 +1792,7 @@ def longest_common_subseq(fasta_file):
 	Returns the longest common subsequence of the two strings.
 	Output is written to 'output_<fasta_file>'.
 	"""
-	
+
 	if os.path.isfile(fasta_file):
 		f_out = True
 		strings = [i[1] for i in fasta_read(fasta_file)[:2]]
@@ -1809,7 +1803,7 @@ def longest_common_subseq(fasta_file):
 			s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
 		except:
 			raise ValueError("Invalid input. See .__doc__")
-	
+
 	if len(s1) > len(s2):
 		s, t = s1, s2
 	else:
@@ -1822,7 +1816,7 @@ def longest_common_subseq(fasta_file):
 				Arr[i+1][j+1] = Arr[i][j] + 1
 			else:
 				Arr[i+1][j+1] = max(Arr[i+1][j], Arr[i][j+1])
-	
+
 	seq = ''
 	i, j = len(s), len(t)
 	while i*j != 0:
@@ -1835,7 +1829,7 @@ def longest_common_subseq(fasta_file):
 			i -= 1
 			j -= 1
 	seq = seq[::-1]
-	
+
 	if f_out:
 		with open('ouput_{}'.format(fasta_file), 'w') as fout:
 			fout.write(seq)
@@ -1864,7 +1858,7 @@ def longest_common_subseq(fasta_file):
 	#		else:
 	#			seq += rec_lng_subseq(s, t[:-1])
 	#			seq1 += rec_lng_subseq(s[:-1], t)
-	#	
+	#
 	#		seq = max([seq, seq1])
 	#		memoire[s,t] = seq
 	#		return seq
@@ -1878,7 +1872,7 @@ def longest_common_subseq(fasta_file):
 #	n -> A non-negative integer less than or equal to the length
 #	     of alphabet.
 #
-#	Returns all strings of length at most n formed from alphabet, ordered 
+#	Returns all strings of length at most n formed from alphabet, ordered
 #	lexicographically.
 #	Output is written to 'ouput_<n>_lex_sort.txt'.
 #	"""
@@ -1889,7 +1883,7 @@ def longest_common_subseq(fasta_file):
 #		raise ValueError(print(lex_sort_strings.__doc__))
 #
 #	alph = [' '] + [i for i in alphabet]
-#	
+#
 #	llperms = [lex_perms(alphabet, i) for i in range(1, len(alphabet)+1)]
 #	lperms, perms = [], []
 #	for i in llperms:
@@ -1926,7 +1920,7 @@ def longest_common_subseq(fasta_file):
 #	return ordered
 
 
-## The following ranking algorithm can solve the worst case input in 
+## The following ranking algorithm can solve the worst case input in
 ## 5 minutes or so, which much better than the above, but there is a
 ## yet-quicker way about this abusing the nature of itertools.product.
 ## It's worth learning how to construct from scratch the fastest
@@ -1938,7 +1932,7 @@ def lex_sort_strings(alphabet, n):
 	n -> A non-negative integer less than or equal to the length
 	     of alphabet.
 
-	Returns all strings of length at most n formed from alphabet, ordered 
+	Returns all strings of length at most n formed from alphabet, ordered
 	lexicographically.
 	Output is written to 'ouput_<n>_lex_sort.txt'.
 	"""
@@ -1949,7 +1943,7 @@ def lex_sort_strings(alphabet, n):
 		raise ValueError(print(lex_sort_strings.__doc__))
 
 	alph = [' '] + [i for i in alphabet]
-	pperms = [list(product(alphabet, repeat = i) for i in range(1,n+1))]
+	pperms = [list(product(alphabet, repeat=i) for i in range(1, n+1))]
 	perms = []
 	for i in pperms:
 		for j in i:
@@ -2013,7 +2007,7 @@ def distance_matrix(fasta_file):
 				fout.write('{} '.format(j))
 			fout.write('\n')
 	return P
-	
+
 
 def sizeof_powerset(n):
 
@@ -2048,12 +2042,13 @@ def reversal_distance(seq_file):
 		pairs = [(f[i], f[i+1]) for i in range(0, len(f), 2)]
 	else:
 		raise ValueError('Argument must be a valid file.\n{}'
-			             .format(reversal_distance.__doc__))
+			                .format(reversal_distance.__doc__))
 
 	def breakpoints(a):
 		'Returns a list of breakpoint indices of a.'
 
 		b = []
+		a = [0] + a + [len(a) + 1]
 		for i in range(len(a)-1):
 			if abs(a[i] - a[i+1]) != 1:
 				b += [i]
@@ -2071,20 +2066,40 @@ def reversal_distance(seq_file):
 		'Applies permutation b to a.'
 
 		return [a[i-1] for i in b]
-		
-	## Finding the reversal distance between a and b
-	## is the same as finding the distance between
-	## b^-1 * a and the identity permutation.
-	inv_b = inverse_perm(b)
-	pi = apply_permutation(inv_b, a)
-
-	breaks = breakpoints(pi)
-	break_count = len(breaks)
 
 
-	
+	def rev_dist(a, b):
+		"""
+		Greedy breakpoint sort algorithm for finding reversal distance.
+	    Finding the reversal distance between a and b is the same as finding
+	    the distance between b^-1 * a and the identity permutation.
+	    """
 
-		
+		d = 0
+
+		rev = lambda p, i, j: p[:i] + p[i:j+1][::-1] + p[j+1:]
+		is_decreasing = lambda s: s == sorted(s, reverse=True)
+
+		inv_b = inverse_perm(b)
+		p = apply_permutation(inv_b, a)
+		breaks = breakpoints(p)
+
+		print(p)
+
+
+		return d
+
+	return rev_dist([5, 2, 4, 1, 3], [2, 3, 1, 5, 4])
+
+	distances = []
+	for pair in pairs:
+		distances += [rev_dist(pair[0], pair[1])]
+	return distances
+
+
+
+
+
 
 
 
