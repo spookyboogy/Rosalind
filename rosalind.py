@@ -123,7 +123,7 @@ def reverse_compliment(dna_string):
 	return c
 
 
-def fasta_read(fasta_file, names = True):
+def fasta_read(fasta_file, names=True):
 
 	"""
 	Takes a file in fasta format and returns list of
@@ -135,7 +135,6 @@ def fasta_read(fasta_file, names = True):
 	f = fasta_file
 	if not os.path.isfile(f):
 		raise ValueError("Invalid file")
-		return
 	else:
 		fopen = open(f, 'r')
 		l = fopen.read().split('>')
@@ -189,7 +188,7 @@ def hamm(s, t):
 	return sum((s[i] != t[i]) for i in range(len(s)))
 
 
-def rabbits(n, m = 0, k = 1):
+def rabbits(n, m=0, k=1):
 
 	"""
 	n -> number of months for breeding
@@ -201,7 +200,7 @@ def rabbits(n, m = 0, k = 1):
 	of being born.
 	"""
 
-	def real_rabbits(n, k = 1):
+	def real_rabbits(n, k=1):
 
 		"""
 		Could be extended to account for death or to
@@ -210,6 +209,7 @@ def rabbits(n, m = 0, k = 1):
 		"""
 
 		class rabbit_pair:
+			'A real rabbit.'
 
 			def __init__(self):
 
@@ -240,7 +240,7 @@ def rabbits(n, m = 0, k = 1):
 
 			for rabbit in population:
 
-				litter = rabbit.reproduce(pairs = k)
+				litter = rabbit.reproduce(pairs=k)
 				offspring += [i for i in litter if i != None]
 				rabbit.envejecer()
 				if rabbit.age == m:
@@ -274,7 +274,8 @@ def rabbits(n, m = 0, k = 1):
 		return len(population)
 
 
-	def math_rabbits(n, m, k = 1):
+	def math_rabbits(n, m, k=1):
+		'Rabbits are numbers.'
 
 		if not m:
 			s = [0, 1, 1, 1 + k]
@@ -314,6 +315,12 @@ def dominance_prb(k, m, n):
 	"""
 
 	def dom_prob(g1, g2):
+		"""
+		g1, g2 -> genotypes belonging to k, m, or n
+
+		Returns probability of dominant genotype in punnet square
+		g1 x g2.
+		"""
 
 		if g1 in k or g2 in k:
 			return 1
@@ -366,7 +373,7 @@ def rna_to_prot(rna_string):
 	return p
 
 
-def subs(string, substring, zero_based = True):
+def subs(string, substring, zero_based=True):
 
 	"""
 	Returns the starting positions of substring in string.
@@ -438,16 +445,16 @@ def cons(fasta_file):
 				cons_sym = i[0]
 		consensus += cons_sym
 
-	p_syms_ordered = sorted(p, key = lambda entry: entry[0])
+	p_syms_ordered = sorted(p, key=lambda entry: entry[0])
 
 	with open("output_{}".format(fasta_file), 'w') as fout:
 		print(consensus)
 		fout.write("{}\n".format(consensus))
 		for sym in p_syms_ordered:
-			print("{}: ".format(sym), end = ' ')
+			print("{}: ".format(sym), end=' ')
 			fout.write("{}: ".format(sym))
 			for i in p[sym]:
-				print(i, end = ' ')
+				print(i, end=' ')
 				fout.write("{} ".format(i))
 			print()
 			fout.write("\n")
@@ -991,7 +998,7 @@ def dna_and_introns_to_protein(fasta_file):
 	return protein
 
 
-def combinations(items, k, rep = False):
+def combinations(items, k, rep=False):
 
 	"""
 	Returns a list of all combinations of length n of items.
@@ -1297,6 +1304,7 @@ def LIS(sequence):
 			raise ValueError("First arg must be an integer sequence.")
 
 	def get_lis(s):
+		'Returns increasing subsequences of sequence s.'
 
 		lis = [[s[0]]]
 		for i in range(1, len(s)):
@@ -1310,10 +1318,10 @@ def LIS(sequence):
 			lis += [l_i + [s[i]]]
 		return lis
 
-	LIS = []
+	LIS_ = []
 	for seq in get_lis(s):
-		if len(seq) > len(LIS):
-			LIS = seq
+		if len(seq) > len(LIS_):
+			LIS_ = seq
 	LDS = []
 	for seq in get_lis([-i for i in s]):
 		if len(seq) > len(LDS):
@@ -1322,11 +1330,11 @@ def LIS(sequence):
 
 	if f_out:
 		with open('output_{}'.format(sequence), 'w') as fout:
-			for seq in [LIS, LDS]:
+			for seq in [LIS_, LDS]:
 				for i in seq:
 					fout.write('{} '.format(i))
 				fout.write('\n')
-	return LIS, LDS
+	return LIS_, LDS
 
 
 def edges_to_form_tree(graph_file):
@@ -1416,7 +1424,8 @@ def shortest_superstring(fasta_file):
 		longest = str()
 		for i in range(len(reads)):
 			for j in range(len(reads)):
-				if i == j: continue
+				if i == j:
+					continue
 
 				if len(reads[i]) <= len(reads[j]):
 					s1, s2 = reads[i], reads[j]
@@ -2111,6 +2120,7 @@ def reversal_distance(seq_file):
 			for branch in reversals:
 				temp_breaks = breakpoints(branch)
 				temp_break_len = len(temp_breaks)
+				# This test or the other break_count test might be redundant.
 				if temp_break_len == 0:
 					return d
 				if break_count - temp_break_len > break_delta:
@@ -2141,12 +2151,8 @@ def reversal_distance(seq_file):
 			fout.write('{} '.format(distance))
 	return distances
 
-try:
-	a = reversal_distance('rear.txt')
-	print(a)
-except Exception as ex:
-	print("_" * 40)
-	print(ex)
+
+
 
 
 
