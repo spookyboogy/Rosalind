@@ -2135,8 +2135,11 @@ def reversal_distance(seq_file):
 	for i in pairs:
 		# For some reason, one order may not be optimal.
 		distances += [min(rev_dist(i[0], i[1]), rev_dist(i[1], i[0]))]
-	return distances
 
+	with open('output_{}'.format(seq_file), 'w') as fout:
+		for distance in distances:
+			fout.write('{} '.format(distance))
+	return distances
 
 try:
 	a = reversal_distance('rear.txt')
