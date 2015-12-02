@@ -2097,13 +2097,11 @@ def reversal_distance(seq_file):
 		print('len(breaks) = {}'.format(len(breaks)))
 
 		strips = breaks_to_strips(breaks)
-		#print('strips = {}'.format(strips))
-
-		#reversals = [rev(p, i[0], i[1]) for i in strips]
-		#for i in range(len(reversals)):
-		#	print('p*r{} -> {}'.format(strips[i], reversals[i]))
+		print('strips = {}'.format(strips))
 
 		reversals = [rev(p, i[0], i[1]) for i in strips]
+		for i in range(len(reversals)):
+			print('p*r{} -> {}'.format(strips[i], reversals[i]))
 
 		d = 0
 		while True:
@@ -2126,7 +2124,7 @@ def reversal_distance(seq_file):
 
 				temp_breaks = breakpoints(branch)
 				print('len(temp_breaks) = {}'.format(len(temp_breaks))
-						, end = ' ')
+					     , end=' ')
 				print('-> break delta = {}'
 					     .format(break_count - len(temp_breaks)))
 				if break_count - len(temp_breaks) >= break_delta:
@@ -2143,19 +2141,24 @@ def reversal_distance(seq_file):
 				print('{}: {}'.format(i, candidates[i]))
 			print('}')
 
-			print('Selected Candidates = {}'.format(candidates[break_delta]))
-
 			branches = [perm for perm in candidates[break_delta]]
+			print('New branches = {}\n'.format(branches))
+			new_reversals = []
 			for branch in branches:
+				print('branch = {}'.format(branch))
 				temp_breaks = breakpoints(branch)
 				temp_strips = breaks_to_strips(temp_breaks)
-				reversals = [rev(p, i[0], i[1]) for i in temp_strips]
+				print('    branch breaks = {}'.format(temp_breaks))
+				print('    branch strips = {}\n'.format(temp_strips))
+				for i in temp_strips:
+					print('    {} -> {}'
+						     .format(i, rev(branch, i[0], i[1] - 1)))
+					new_reversals += [rev(branch, i[0], i[1] - 1)]
+			reversals = new_reversals
 
 		return d
 
-
-
-	return rev_dist([5, 2, 4, 1, 3], [2, 3, 1, 5, 4])
+	#return rev_dist([5, 2, 4, 1, 3], [2, 3, 1, 5, 4])
 
 	distances = []
 	for pair in pairs:
@@ -2164,7 +2167,8 @@ def reversal_distance(seq_file):
 
 
 try:
-	reversal_distance('rear.txt')
+	a = reversal_distance('rear.txt')
+	print(a)
 except Exception as ex:
 	print("_" * 40)
 	print(ex)
