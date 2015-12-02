@@ -2077,7 +2077,7 @@ def reversal_distance(seq_file):
 	    Finding the reversal distance between a and b is the same as finding
 	    the distance between b^-1 * a and the identity permutation.
 	    The identity permutation has 0 break points, so the goal of the
-	    algorithm is to reduce maximum number of breakpoints at each
+	    algorithm is to maximally reduce the number of breakpoints at each
 	    branching point.
 	    """
 
