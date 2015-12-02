@@ -2044,6 +2044,7 @@ def reversal_distance(seq_file):
 		raise ValueError('Argument must be a valid file.\n{}'
 			                .format(reversal_distance.__doc__))
 
+
 	def breakpoints(a):
 		'Returns a list of breakpoint indices of a.'
 
@@ -2054,6 +2055,7 @@ def reversal_distance(seq_file):
 				b += [i]
 		return b
 
+
 	def inverse_perm(a):
 		'Returns the inverse permutation of a.'
 
@@ -2061,6 +2063,7 @@ def reversal_distance(seq_file):
 		for i in range(len(a)):
 			perm[a[a[i] - 1] - 1] = a[i]
 		return perm
+
 
 	def apply_permutation(a, b):
 		'Applies permutation b to a.'
@@ -2094,38 +2097,20 @@ def reversal_distance(seq_file):
 		break_count = len(breaks)
 		if break_count == 0:
 			return 0
-		#print('a = {}\nb = {}'.format(a, b))
-		#print('p = {}'.format(p))
-		#print('breaks = {}'.format(breaks))
-		#print('len(breaks) = {}'.format(len(breaks)))
 
 		strips = breaks_to_strips(breaks)
-		#print('strips = {}'.format(strips))
-
 		reversals = [rev(p, i[0], i[1]) for i in strips]
-		#for i in range(len(reversals)):
-		#	print('p*r{} -> {}'.format(strips[i], reversals[i]))
 
 		d = 0
 		while True:
-
 			d += 1
-			#print('\nd = {}'.format(d))
-			#print(' '.join('-'*20))
-			#print('Reversals = {}'.format(reversals))
-			#print('\nbreak count = {}'.format(break_count))
 
-			# Candidate permuations produce the highest breakpoint delta
+			# Future candidate permutations will have highest break_delta
 			candidates = {delta : [] for delta in [0, 1, 2]}
 			break_delta = 0
 			for branch in reversals:
-				#print('\nbranch = {}'.format(branch))
 				temp_breaks = breakpoints(branch)
 				temp_break_len = len(temp_breaks)
-				#print('    len(temp_breaks) = {}'.format(temp_break_len)
-				#	     , end=' ')
-				#print('-> break delta = {}'
-				#	     .format(break_count - temp_break_len))
 				if temp_break_len == 0:
 					return d
 				if break_count - temp_break_len > break_delta:
@@ -2134,33 +2119,17 @@ def reversal_distance(seq_file):
 				elif break_count - temp_break_len == break_delta:
 					if branch not in candidates[break_delta]:
 						candidates[break_delta] += [branch]
-				#else:
-					#print('    not a candidate')
-			#print('\nCandidates: {')
-			#for i in candidates:
-			#	print('{}: {}'.format(i, candidates[i]))
-			#print('}')
+
 			break_count -= break_delta
-			#print('\nFinal break_delta = {}'.format(break_delta))
-			#print('ending break count = {}'.format(break_count))
 			if break_count == 0:
 				return d
-			branches = [perm for perm in candidates[break_delta]]
-			#print('New branches = {}\n'.format(branches))
+
 			new_revs = []
-			for branch in branches:
-				#print('\nbranch = {}'.format(branch))
+			for branch in candidates[break_delta]:
 				temp_breaks = breakpoints(branch)
 				temp_strips = breaks_to_strips(temp_breaks)
-				#print('    branch breaks = {}'.format(temp_breaks))
-				#print('    branch strips = {}\n'.format(temp_strips))
-				#for i in temp_strips:
-					#print('    {} -> {}'
-					#	     .format(i, rev(branch, i[0], i[1] - 1)))
-				new_revs += [rev(branch, i[0], i[1]-1) for i in temp_strips]
+				new_revs += [rev(branch, i[0], i[1] - 1) for i in temp_strips]
 			reversals = new_revs
-
-	#return rev_dist([5, 2, 4, 1, 3], [2, 3, 1, 5, 4])
 
 	distances = []
 	for i in pairs:
@@ -2170,12 +2139,11 @@ def reversal_distance(seq_file):
 
 
 try:
-	a = reversal_distance('rosalind_rear.txt')
+	a = reversal_distance('rear.txt')
 	print(a)
 except Exception as ex:
 	print("_" * 40)
 	print(ex)
-
 
 
 
