@@ -1366,12 +1366,13 @@ def edges_to_form_tree(graph_file):
 def strprob(input_file):
 
 	"""
-	input_file -> A file formatted as follows:
+	inpWut_file -> A file formatted as follows:
 				      <DNA-string>
 				      <Arbitrary, Space-separated GC-contents>
 	Returns an array of the same length as the GC-contents list representing
 	the probability that a random string constructed with each GC-content will
 	match DNA-string exactly.
+	Output is written to 'output_<input_file>'.
 	"""
 
 	if os.path.isfile(input_file):
@@ -1380,7 +1381,7 @@ def strprob(input_file):
 			d = f[0].strip('\n').upper()
 			gc_contents = [float(i) for i in f[1].split()]
 	else:
-		raise ValueError('Input must be a file. See strprob.__doc__')
+		raise ValueError('Input must be a file. \n{}'.format(strprob.__doc__))
 
 	def get_prob(gc_content):
 
@@ -2152,7 +2153,38 @@ def reversal_distance(seq_file):
 	return distances
 
 
+def rstr(input_file):
 
+	"""
+	input_file -> A list containing (in order) a sample size N,
+	              GC-content, and DNA string or such a file, formatted as:
+
+	                  N GC-Content
+	                  DNA string
+
+	Returns the probability that if N random strings (of equal length
+	to DNA string) are generated with GC-Content, at least 1 of the strings
+	will equal DNA string.
+	"""
+
+	try:
+		try:
+			with open(input_file, 'r') as f:
+				input_file = f.read().split()
+		except:
+			pass
+		n = int(input_file[0])
+		gc = float(input_file[1])
+		s = str(input_file[2])
+	except:
+		raise ValueError('Invalid input.\n{}'.format(rstr.__doc__))
+
+	p_cg = gc/2
+	p_at = (1-gc)/2
+	s_prob = p_cg**len([i for i in s if i in ['G', 'C']])
+	s_prob *= p_at ** len([i for i in s if i in ['A', 'T']])
+
+	return 1 - (1-s_prob)**n
 
 
 
