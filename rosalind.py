@@ -3,6 +3,7 @@
 
 import os
 import operator
+from scipy.misc import comb
 from itertools import product
 from urllib.request import urlopen
 from math import log10, floor, ceil, factorial as fact
@@ -2185,6 +2186,23 @@ def rstr(input_file):
 	s_prob *= p_at ** len([i for i in s if i in ['A', 'T']])
 
 	return 1 - (1-s_prob)**n
+
+
+def nCk(n, k):
+
+	'n >= k > 0'
+
+	return (fact(n) / (fact(n-k)*fact(k))) % int(1E6)
+
+
+def binomial_sum(n, m):
+
+	'Returns the sum of nCk for  m <= k <= n modulo 1,000,000.'
+
+	s = sum([comb(n, k, exact=True) % int(1E6) for k in range(m, n+1)])
+	return s % int(1E6)
+
+
 
 
 
