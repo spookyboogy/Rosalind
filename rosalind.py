@@ -1871,7 +1871,7 @@ def longest_common_subseq(fasta_file):
 	#			seq1 += rec_lng_subseq(s[:-1], t)
 	#
 	#		seq = max([seq, seq1])
-	#		memoire[s,t] = seq
+	#		#memoire[s,t] += seq
 	#		return seq
 	#seq = rec_lng_subseq(s, t)[::-1]
 
@@ -2220,30 +2220,55 @@ def newick_read(newick_string):
 	### so maybe it's worth creating a separate function for reading
 	### in newick trees from files.
 
+	print('\n\n{}'.format(newick_string))
 	tree = newick_string
 	i = 0
 	t = '('
 	while i < len(tree):
 		c = tree[i]
-		# Seems logically inefficient, refactor later.
-		if c == '(':
+		# Logically inefficient, refactor later.
+
+		if i == 0:
+			if c != '(':
+				t += "'{}".format(c)
+			else:
+				if len(tree) > 1:
+					if tree[i+1] != '(':
+						t += "('"
+					else:
+						t += '('
+
+		elif c == '(':
 			if i > 0:
 				if tree[i-1] not in ['(', '']:
-					t += "'"
+					t += "',"
 			t += '('
 			if i < len(tree) - 1: # Silly. To avoid errors
 				if tree[i+1] not in ['(', '']:
 					t += "'"
+
 		elif c == ',':
-			t += "','"
+			if i > 0 and i < len(tree) - 1:
+				if tree[i-1] == ')' and tree[i+1] == '(':
+					t += ','
+				elif tree[i-1] == ')':
+					t += ",'"
+				elif tree[i+1] == '(':
+					t += "',"
+				else:
+					t += "','"
+
 		elif c == ')':
+
 			if i > 0: # Silly. To avoid errors
 				if tree[i-1] not in [')', '']:
 					t += "'"
-			t += ',),'
+
+			t += ',)'
+
 			if i < len(tree) - 1:
 				if tree[i+1] not in [')', '']:
-					t += "'"
+					t += ",'"
 		else:
 			t += c
 		if i == len(tree) - 1 and c != ')':
@@ -2251,23 +2276,95 @@ def newick_read(newick_string):
 		i += 1
 
 	t += ')'
+	print(t)
 	return eval(t)
 
 
 def newick_distance(input_file):
 
 	"""
-	Empty
+	input_file -> A file formatted as follows:
+
+	                  Newick-formatted tree 1;
+	                  x1 y1
+
+					  Newick-formatted tree 2;
+	                  x2 y2
+	  				  ...
+
+	input_file: A collection of n trees in Newick format, with each tree
+	    followed by the labels of two nodes in the tree.
+
+	Returns: A collection of n positive integers, where n1 represents
+		the distance between x1 and y1 in newick_tree 1.
+
+	Output is written to 'output_<input_file>'.
 	"""
 
-	pass
+
+	if os.path.isfile(input_file):
+		with open(input_file, 'r') as f:
+			f = f.readlines()
+			f = [i.strip(';\n') for i in f if i != '\n']
+			D = [[newick_read(f[i]), f[i+1].split()] for i in range(0, len(f), 2)]
+			#for i in D:
+			#	print('{} : {}'.format(i, D[i]))
+
+	else:
+		raise ValueError("Invalid argument.\n{}"
+							.format(newick_distance.__doc__))
 
 
+	def depth_of_node(tree, node, ind=0):
+
+		"""
+		Recursively searches for node in tree and returns its depth if it
+		exists in the tree.
+		"""
+
+		depth = 1
+		#print(' ' * (ind*4) + 'depth = {}'.format(depth))
+		#print(' ' * (ind*4) + 'Tree: {}\n'.format(tree))
+		for i in tree:
+			#print(' ' * (ind*4) + 'item = {}\n'.format(i))
+			if isinstance(i, tuple):
+				d = depth_of_node(i, node, ind=ind+1)
+				if d > 0:
+					#print('Found item with subdepth = {}'.format(d))
+					#print('Total depth = {}'.format(depth + d))
+					return depth + d
+			elif i == node:
+				#print(' ' * (ind*4) + 'Found item at depth =' + str(depth))
+				return depth
+		return 0
+
+	depth_pairs = [0] * len(D)
+	#print('depths = {}'.format(depth_pairs))
+	for i in range(len(D)):
+		#print(' '.join('-' * 24))
+		#print("Tree = {}\nSearch nodes = {}\n".format(D[i][0], D[i][1]))
+		tree = D[i][0]
+		nodes = D[i][1]
+		depths = tuple(depth_of_node(tree, node)-1 for node in nodes)
+		#print("Depths = {}".format(depths))
+		depth_pairs[i] = depths
+	#print(' '.join('-' * 24))
+	print(depth_pairs)
+
+	distances = []
+	for pair in depth_pairs:
+		if pair[0] == pair[1]:
+			distances += [2]
+		elif abs(pair[1] - pair[0]) == 1:
+			distances += [1]
+		else:
+			distances += [abs(pair[1] - pair[0])]
+	return distances
 
 
-
-
-
+print(newick_distance('nwck.txt'))
+#print(newick_read('dog(cat(mouse))'))
+#print(newick_read('(((mouse)cat)dog)'))
 
 ###################################
 ############ To Do ################
