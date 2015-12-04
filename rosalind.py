@@ -2182,25 +2182,97 @@ def rstr(input_file):
 
 	p_cg = gc/2
 	p_at = (1-gc)/2
-	s_prob = p_cg**len([i for i in s if i in ['G', 'C']])
-	s_prob *= p_at ** len([i for i in s if i in ['A', 'T']])
+	s_prob = p_cg ** len([1 for i in s if i in ['G', 'C']])
+	s_prob *= p_at ** len([1 for i in s if i in ['A', 'T']])
 
-	return 1 - (1-s_prob)**n
+	return 1 - (1- s_prob) ** n
 
 
 def nCk(n, k):
 
-	'n >= k > 0'
+	'n >= k >= 0'
 
 	return (fact(n) / (fact(n-k)*fact(k))) % int(1E6)
 
 
 def binomial_sum(n, m):
 
-	'Returns the sum of nCk for  m <= k <= n modulo 1,000,000.'
+	'Returns the sum of nCk for m <= k <= n modulo 1,000,000.'
 
 	s = sum([comb(n, k, exact=True) % int(1E6) for k in range(m, n+1)])
 	return s % int(1E6)
+
+
+## Allow for a file of newick_strings to be read.
+def newick_read(newick_string):
+
+	"""
+	newick_string -> A Newick-formatted string representing a tree.
+
+	Returns the conversion from string to (nested) tuple.
+	"""
+
+	###
+	### Wrap the string -> tuple conversion process in a subfunction
+	### , typecheck <newick_string>; return a list of one tuple if not
+	### a file, or return a list of however many tuples are in file.
+	### This kind of thing might be costly to function efficiency though,
+	### so maybe it's worth creating a separate function for reading
+	### in newick trees from files.
+	###
+	#if os.path.isfile(input_file):
+	#	with open(input_file, 'r') as f:
+	#		f = f.read().replace('\n', '').split(';')
+	#		f = [i for i in f if i not in ['', ' ',]]
+	#		trees = [newick_read(i) for i in f]
+	#else:
+	#	raise ValueError('Argument must be a valid file.\n{}'
+	#						           	.format(newick_read.__doc__))
+
+	tree = newick_string
+	i = 0
+	t = '('
+	while i < len(tree):
+		c = tree[i]
+		# Seems logically inefficient, refactor later.
+		if c == '(':
+			if i > 0:
+				if tree[i-1] not in ['(', '']:
+					t += "'"
+			t += '('
+			if i < len(tree) - 1: # Silly. To avoid errors
+				if tree[i+1] not in ['(', '']:
+					t += "'"
+		elif c == ',':
+			t += "','"
+		elif c == ')':
+			if i > 0: # Silly. To avoid errors
+				if tree[i-1] not in [')', '']:
+					t += "'"
+			t += ',),'
+			if i < len(tree) - 1:
+				if tree[i+1] not in [')', '']:
+					t += "'"
+		else:
+			t += c
+		if i == len(tree) - 1 and c != ')':
+			t += "\'"
+		i += 1
+
+	t += ')'
+	return eval(t)
+
+
+def newick_distance(input_file):
+
+	"""
+	Empty
+	"""
+
+	pass
+
+
+
 
 
 
@@ -2212,6 +2284,8 @@ def binomial_sum(n, m):
 ##
 ##  Learn how itertools.product is
 ##+ so fast.
+##
+##  Do the same with scipy.comb.
 ##
 ##  Optimize, refactor, etc.
 ##
