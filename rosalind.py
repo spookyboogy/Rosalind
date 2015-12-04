@@ -2203,7 +2203,7 @@ def binomial_sum(n, m):
 	return s % int(1E6)
 
 
-## Allow for a file of newick_strings to be read.
+
 def newick_read(newick_string):
 
 	"""
@@ -2212,7 +2212,7 @@ def newick_read(newick_string):
 	Returns the conversion from string to (nested) tuple.
 	"""
 
-	###
+	### [Maybe] Allow for a file of newick_strings to be read:
 	### Wrap the string -> tuple conversion process in a subfunction
 	### , typecheck <newick_string>; return a list of one tuple if not
 	### a file, or return a list of however many tuples are in file.
@@ -2225,9 +2225,6 @@ def newick_read(newick_string):
 	#		f = f.read().replace('\n', '').split(';')
 	#		f = [i for i in f if i not in ['', ' ',]]
 	#		trees = [newick_read(i) for i in f]
-	#else:
-	#	raise ValueError('Argument must be a valid file.\n{}'
-	#						           	.format(newick_read.__doc__))
 
 	tree = newick_string
 	i = 0
