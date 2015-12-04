@@ -2219,12 +2219,6 @@ def newick_read(newick_string):
 	### This kind of thing might be costly to function efficiency though,
 	### so maybe it's worth creating a separate function for reading
 	### in newick trees from files.
-	###
-	#if os.path.isfile(input_file):
-	#	with open(input_file, 'r') as f:
-	#		f = f.read().replace('\n', '').split(';')
-	#		f = [i for i in f if i not in ['', ' ',]]
-	#		trees = [newick_read(i) for i in f]
 
 	tree = newick_string
 	i = 0
