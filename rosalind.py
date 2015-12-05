@@ -2345,36 +2345,23 @@ def newick_distance(input_file):
 		"""
 
 		depth = 1
-		#print(' ' * (ind*4) + 'depth = {}'.format(depth))
-		#print(' ' * (ind*4) + 'Tree: {}\n'.format(tree))
 		for i in tree:
-			#print(' ' * (ind*4) + 'item = {}\n'.format(i))
 			if isinstance(i, tuple):
 				d = depth_of_node(i, node, ind=ind+1)
 				if d > 0:
-					#print('Found item with subdepth = {}'.format(d))
-					#print('Total depth = {}'.format(depth + d))
 					return depth + d
 			elif i == node:
-				#print(' ' * (ind*4) + 'Found item at depth =' + str(depth))
 				return depth
-
-		#Purpose of this was to return 0 if not in tree but that's not
-		#what the following line achieves. Fix that
+		# Purpose of this was to return 0 if not in tree but that's not
+		# what the following line achieves. Fix that
 		return 0
 
 	depth_pairs = [0] * len(D)
-	#print('depths = {}'.format(depth_pairs))
 	for i in range(len(D)):
-		#print(' '.join('-' * 24))
-		#print("Tree = {}\nSearch nodes = {}\n".format(D[i][0], D[i][1]))
 		tree = D[i][0]
 		nodes = D[i][1]
-		depths = tuple(depth_of_node(tree, node)-1 for node in nodes)
-		#print("Depths = {}".format(depths))
+		depths = tuple(depth_of_node(tree, node) - 1 for node in nodes)
 		depth_pairs[i] = depths
-	#print(' '.join('-' * 24))
-	#print(depth_pairs)
 
 	distances = []
 	for pair in depth_pairs:
@@ -2384,7 +2371,7 @@ def newick_distance(input_file):
 			distances += [1]
 		else:
 			distances += [abs(pair[1] - pair[0])]
-	#print()
+
 	with open('output_{}'.format(input_file), 'w') as fout:
 		fout.write(' '.join(str(i) for i in distances))
 	return distances
