@@ -2303,6 +2303,7 @@ def newick_read(newick_string):
 	return eval(t)
 
 
+#Not working at the moment.
 def newick_distance(input_file):
 
 	"""
