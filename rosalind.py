@@ -2219,6 +2219,9 @@ def newick_read(newick_string):
 	### This kind of thing might be costly to function efficiency though,
 	### so maybe it's worth creating a separate function for reading
 	### in newick trees from files.
+	### Allow for direct ancestors to be denoted and for
+	### distances to be denoted.
+	### Would create a distaster if nodes were unlabeled.
 
 	print('\n\n{}'.format(newick_string))
 	tree = newick_string
@@ -2227,7 +2230,7 @@ def newick_read(newick_string):
 	while i < len(tree):
 		c = tree[i]
 		# Logically inefficient, refactor later.
-
+		# Holy shit, this is really a mess.
 		if i == 0:
 			if c != '(':
 				t += "'{}".format(c)
@@ -2237,38 +2240,58 @@ def newick_read(newick_string):
 						t += "('"
 					else:
 						t += '('
-
 		elif c == '(':
 			if i > 0:
-				if tree[i-1] not in ['(', '']:
+				if tree[i-1] not in ['(', ',', '']:
 					t += "',"
 			t += '('
 			if i < len(tree) - 1: # Silly. To avoid errors
-				if tree[i+1] not in ['(', '']:
+				if tree[i+1] not in ['(', '', ',']:
 					t += "'"
-
+				elif tree[i+1] == ',':
+					t += "'"
 		elif c == ',':
-			if i > 0 and i < len(tree) - 1:
+			if i > 0 and i < len(tree) - 2:
 				if tree[i-1] == ')' and tree[i+1] == '(':
 					t += ','
-				elif tree[i-1] == ')':
-					t += ",'"
-				elif tree[i+1] == '(':
-					t += "',"
 				else:
-					t += "','"
-
+					if tree[i-1] == ')': #Only
+						t += ",'"
+					elif tree[i+1] == '(': #Only
+						t += "',"
+					elif tree[i+1] == ')':
+						if tree[i-1] == ',':
+							t += "'"
+						t += ",''"
+					elif tree[i-1] == '(':
+						t += "',"
+						if tree[i+1] == ',':
+							t += "'"
+					else:
+						t += "','"
+			else:
+				if i > 0:
+					if tree[-1] == ')':
+						t += "','"
+					else:
+						t += "',''"
+				else:
+					t += "'',"
 		elif c == ')':
-
 			if i > 0: # Silly. To avoid errors
-				if tree[i-1] not in [')', '']:
-					t += "'"
+				if tree[i-1] not in [')', '', ',']:
+					t += "')"
 
-			t += ',)'
-
-			if i < len(tree) - 1:
-				if tree[i+1] not in [')', '']:
-					t += ",'"
+					if i < len(tree) - 1:
+						if tree[i+1] not in [')', ',', '']:
+							t += ",'"
+				else:
+					if tree[i-1] == ',':
+						t += "'"
+					t += ',)'
+					if i < len(tree) - 1:
+						if tree[i+1] not in [')', '', ',']:
+							t += ",'"
 		else:
 			t += c
 		if i == len(tree) - 1 and c != ')':
@@ -2288,7 +2311,7 @@ def newick_distance(input_file):
 	                  Newick-formatted tree 1;
 	                  x1 y1
 
-					  Newick-formatted tree 2;
+	                  Newick-formatted tree 2;
 	                  x2 y2
 	  				  ...
 
@@ -2307,12 +2330,11 @@ def newick_distance(input_file):
 			f = f.readlines()
 			f = [i.strip(';\n') for i in f if i != '\n']
 			D = [[newick_read(f[i]), f[i+1].split()] for i in range(0, len(f), 2)]
-			#for i in D:
-			#	print('{} : {}'.format(i, D[i]))
+
 
 	else:
 		raise ValueError("Invalid argument.\n{}"
-							.format(newick_distance.__doc__))
+					              .format(newick_distance.__doc__))
 
 
 	def depth_of_node(tree, node, ind=0):
@@ -2336,6 +2358,9 @@ def newick_distance(input_file):
 			elif i == node:
 				#print(' ' * (ind*4) + 'Found item at depth =' + str(depth))
 				return depth
+
+		#Purpose of this was to return 0 if not in tree but that's not
+		#what the following line achieves. Fix that
 		return 0
 
 	depth_pairs = [0] * len(D)
@@ -2349,7 +2374,7 @@ def newick_distance(input_file):
 		#print("Depths = {}".format(depths))
 		depth_pairs[i] = depths
 	#print(' '.join('-' * 24))
-	print(depth_pairs)
+	#print(depth_pairs)
 
 	distances = []
 	for pair in depth_pairs:
@@ -2359,10 +2384,17 @@ def newick_distance(input_file):
 			distances += [1]
 		else:
 			distances += [abs(pair[1] - pair[0])]
+	#print()
+	with open('output_{}'.format(input_file), 'w') as fout:
+		fout.write(' '.join(str(i) for i in distances))
 	return distances
 
 
-print(newick_distance('nwck.txt'))
+a = newick_distance('rosalind_nwck.txt')
+print(a)
+
+
+
 #print(newick_read('dog(cat(mouse))'))
 #print(newick_read('(((mouse)cat)dog)'))
 
