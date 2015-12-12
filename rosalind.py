@@ -2252,9 +2252,6 @@ def newick_distance(input_file, quiet=True):
                     cur_parent.add_child(n)
                     self.nodes += [n]
 
-                elif tree[i] == ',':
-                    return '\n\nooops!\n\n'
-
                 else:
                     n = Node(len(self.nodes), cur_parent, name=tree[i])
                     cur_parent.add_child(n)
