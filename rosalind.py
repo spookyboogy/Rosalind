@@ -2153,7 +2153,7 @@ def newick_distance(input_file, quiet=True):
     class Node(object):
 
         """
-        tree node
+        Tree node.
         """
 
         def __init__(self, number, parent, name=None):
@@ -2191,7 +2191,6 @@ def newick_distance(input_file, quiet=True):
             self.rawtree = tree
             self.tree = []
             self.nodes = []
-            self.edges = []
             self.parse(tree)
             self.node_refs = {node.name: node for node in self.nodes}
 
@@ -2226,7 +2225,8 @@ def newick_distance(input_file, quiet=True):
         def parse(self, tree):
 
             """
-            parses the tree, fills self.nodes and self.edges.
+            Parses the tree, fills self.nodes and creates relations
+            among nodes.
             """
 
             tree = tree.replace('(', '( ').replace(')', ' )')
@@ -2297,7 +2297,6 @@ def newick_distance(input_file, quiet=True):
                       .format(n1_path, n2_path))
                 print('overlap = {}'.format(overlap))
                 print('distance = {}'.format(d))
-
             return d
 
 
