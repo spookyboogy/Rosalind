@@ -2280,7 +2280,7 @@ def LCS(fasta_file, indexed=False):
         try:
             s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
         except:
-            raise ValueError("Invalid input. See .__doc__")
+            raise ValueError("Invalid input.\n{}".format(LCS.__doc__))
 
     if indexed:
         index = []
@@ -2349,13 +2349,13 @@ def edit_distance(s, t, quiet=True):
             M[i][j] = d
 
     if not quiet:
-        print(' ' * 2 + "\'\'  " + '  '.join(i for i in s))
+        print(' ' * 3 + "\' \' " + '  '.join(i for i in s))
         temp_t = ' ' + t
         for i in range(len(M)):
             if i == 0:
-                print("\'\'", end='')
+                print("\' \'", end='')
             else:
-                print(temp_t[i], end=' ')
+                print(' ' + temp_t[i], end=' ')
             print(M[i])
         print('\n>> Edit distance = {}\n'.format(M[-1][-1]))
 
@@ -2372,13 +2372,63 @@ def edit(fasta_file, quiet=True):
     """
 
     if os.path.isfile(fasta_file):
-        strings = [i[1] for i in fasta_read(fasta_file)]
-        return edit_distance(strings[0], strings[1], quiet=quiet)
+        s, t = [i[1] for i in fasta_read(fasta_file)][:2]
+        return edit_distance(s, t, quiet=quiet)
     else:
         raise ValueError("Invalid input.\n{}".format(edit.__doc__))
 
 
+def string_prob(string, GC_content):
 
+    """
+    Returns the probability of string occuring when constructed with
+    GC-content GC_content.
+    """
+
+    s = string.upper()
+
+    p_gc = GC_content / 2
+    p_at = (1 - GC_content) / 2
+
+    p = p_at ** (s.count('A') + s.count('T'))
+    p *= p_gc ** (s.count('G') + s.count('C'))
+
+    return p
+
+
+def EX_occurences(input_file, n=int, s=str, gc=float):
+
+    """
+    input_file -> None if keywords are to be used, else a file formatted as
+                  follows:
+
+                      n   # Length of a DNA string
+                      s   # A potential DNA substring of length <= n
+                      gc1 gc2 ... gcM   # M GC-content values
+
+    Returns a list of length M where M[i] is the expected number of
+    occurences of s in a DNA string of length n constructed with given
+    GC-content gc[i].
+    If you only want the result of once such case, set input_file = None
+    and use the keywords.
+    """
+
+    if not input_file:
+        return (n - len(s) - 1) * string_prob(s, gc)
+    else:
+        with open(input_file, 'r') as f:
+            f = f.readlines()[:3]
+            n = int(f[0].strip())
+            s = f[1].strip().upper()
+            M = [float(i) for i in f[2].split()]
+
+    fits = n - (len(s) - 1)
+    EX = lambda gc: fits * string_prob(s, gc)
+    P = [EX(gc) for gc in M]
+
+    with open('output_{}'.format(input_file), 'w') as fout:
+        fout.write(' '.join(str(i) for i in P))
+    return P
 
 
 
