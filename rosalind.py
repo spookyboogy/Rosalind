@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 ## http://rosalind.info/problems/list-view/
 
+"""
+Solutions to Rosalind bioinformatics problems.
+"""
+
 import os
 import operator
-from scipy.misc import comb
 from itertools import product
 from urllib.request import urlopen
 from math import log10, floor, ceil, factorial as fact
 from collections import OrderedDict as Dict #dict is non-ordered
+from scipy.misc import comb
 
 rna_codons = {
     #'AUG' : 'Start',
@@ -1794,64 +1798,10 @@ def failure_array(string):
     return f_arr
 
 
-def longest_common_subseq(fasta_file):
-
-    """
-    fasta_file -> A fasta-formatted file containing two DNA strings.
-                  or an indexable container of two such strings.
-
-    Returns the longest common subsequence of the two strings.
-    Output is written to 'output_<fasta_file>'.
-    """
-
-    if os.path.isfile(fasta_file):
-        f_out = True
-        strings = [i[1] for i in fasta_read(fasta_file)[:2]]
-        s1, s2 = strings[0], strings[1]
-    else:
-        f_out = False
-        try:
-            s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
-        except:
-            raise ValueError("Invalid input. See .__doc__")
-
-    if len(s1) > len(s2):
-        s, t = s1, s2
-    else:
-        s, t = s2, s1
-
-    Arr = [[0 for j in range(len(t)+1)] for i in range(len(s)+1)]
-    for i in range(len(s)):
-        for j in range(len(t)):
-            if s[i] == t[j]:
-                Arr[i+1][j+1] = Arr[i][j] + 1
-            else:
-                Arr[i+1][j+1] = max(Arr[i+1][j], Arr[i][j+1])
-
-    seq = ''
-    i, j = len(s), len(t)
-    while i*j != 0:
-        if Arr[i][j] == Arr[i-1][j]:
-            i -= 1
-        elif Arr[i][j] == Arr[i][j-1]:
-            j -= 1
-        else:
-            seq += s[i-1]
-            i -= 1
-            j -= 1
-    seq = seq[::-1]
-
-    if f_out:
-        with open('ouput_{}'.format(fasta_file), 'w') as fout:
-            fout.write(seq)
-    return seq
-
-
 ## The following ranking algorithm can solve the worst case input in
-## 5 minutes or so, which much better than the above, but there is a
-## yet-quicker way about this abusing the nature of itertools.product.
-## It's worth learning how to construct from scratch the fastest
-## algorithm at solving this.
+## 5 minutes or so, but there is a yet-quicker way about this abusing the
+## nature of itertools.product. It's worth learning how to construct from
+## scratch the fastest algorithm at solving this.
 def lex_sort_strings(alphabet, n):
 
     """
@@ -1905,7 +1855,7 @@ def lex_sort_strings(alphabet, n):
 def distance_matrix(fasta_file):
 
     """
-    fasta_file -> A fasta-formatted file containing dna Strings
+    fasta_file -> A fasta-formatted file containing dna strings
                   of equal length.
 
     Returns a matrix P where Pij is the p distance between the
@@ -2163,7 +2113,7 @@ def newick_distance(input_file, quiet=True):
             self.parent = parent
             self.children = []
 
-        def report(self, indent):
+        def report(self, indent=1):
             'Utilize me!'
 
             print('{}Node : {}'.format(indent*' ', self.name))
@@ -2287,7 +2237,6 @@ def newick_distance(input_file, quiet=True):
                     overlap += [n1_path[i]]
 
             d = len(n1_path) + len(n2_path) - 2*len(overlap)
-
             if not quiet:
                 print('search nodes = {}'.format([node1, node2]))
                 print('\nn1_path = {}\nn2_path = {}\n'
@@ -2312,6 +2261,121 @@ def newick_distance(input_file, quiet=True):
     return distances
 
 
+def LCS(fasta_file, indexed=False):
+
+    """
+    fasta_file -> A fasta-formatted file containing two DNA strings.
+                  or an indexable container of two such strings.
+
+    Returns the longest common subsequence of the two strings.
+    Output is written to 'output_<fasta_file>'.
+    """
+
+    if os.path.isfile(str(fasta_file)):
+        f_out = True
+        strings = [i[1] for i in fasta_read(fasta_file)[:2]]
+        s1, s2 = strings[0], strings[1]
+    else:
+        f_out = False
+        try:
+            s1, s2 = fasta_file[0].upper(), fasta_file[1].upper()
+        except:
+            raise ValueError("Invalid input. See .__doc__")
+
+    if indexed:
+        index = []
+
+    if len(s1) > len(s2):
+        s, t = s1, s2
+    else:
+        s, t = s2, s1
+
+    Arr = [[0 for j in range(len(t)+1)] for i in range(len(s)+1)]
+    for i in range(len(s)):
+        for j in range(len(t)):
+            if s[i] == t[j]:
+                Arr[i+1][j+1] = Arr[i][j] + 1
+            else:
+                Arr[i+1][j+1] = max(Arr[i+1][j], Arr[i][j+1])
+
+
+    seq = ''
+    i, j = len(s), len(t)
+    while i*j != 0:
+        if Arr[i][j] == Arr[i-1][j]:
+            i -= 1
+        elif Arr[i][j] == Arr[i][j-1]:
+            j -= 1
+        else:
+            seq += s[i-1]
+            if indexed:
+                index += [[i-1, j-1]]
+            i -= 1
+            j -= 1
+    seq = seq[::-1]
+
+    if f_out:
+        with open('ouput_{}'.format(fasta_file), 'w') as fout:
+            fout.write(seq)
+    if indexed:
+        index = index[::-1]
+        return [[seq[i], index[i]] for i in range(len(seq))]
+    else:
+        return seq
+
+
+def edit_distance(s, t, quiet=True):
+
+    'Returns the edit distance between strings s and t.'
+
+    s, t = str(s).upper(), str(t).upper()
+
+    if len(s) > len(t):
+        s, t = t, s
+    lens, lent = len(s), len(t)
+
+    if not quiet:
+        print('\ns = {}\nt = {}\n'.format(s, t))
+
+    M = [[i for i in range(lens + 1)]]
+    M += [[j + 1] + [0 for i in range(lens)] for j in range(lent)]
+
+    for i in range(1, lent + 1):
+        for j in range(1, lens + 1):
+            if s[j-1] == t[i-1]:
+                d = min(M[i-1][j-1], M[i-1][j] + 1, M[i][j-1] + 1)
+            else:
+                d = min(M[i-1][j-1], M[i-1][j], M[i][j-1]) + 1
+            M[i][j] = d
+
+    if not quiet:
+        print(' ' * 2 + "\'\'  " + '  '.join(i for i in s))
+        temp_t = ' ' + t
+        for i in range(len(M)):
+            if i == 0:
+                print("\'\'", end='')
+            else:
+                print(temp_t[i], end=' ')
+            print(M[i])
+        print('\n>> Edit distance = {}\n'.format(M[-1][-1]))
+
+    return M[-1][-1]
+
+
+
+def edit(fasta_file, quiet=True):
+
+    """
+    fasta_file -> A fasta-formatted file containing two strings.
+
+    Returns the edit distance between the strings in fasta_file.
+    """
+
+    if os.path.isfile(fasta_file):
+        strings = [i[1] for i in fasta_read(fasta_file)]
+        return edit_distance(strings[0], strings[1], quiet=quiet)
+    else:
+        raise ValueError("Invalid input.\n{}".format(edit.__doc__))
 
 
 
