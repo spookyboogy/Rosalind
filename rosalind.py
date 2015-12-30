@@ -2362,7 +2362,6 @@ def edit_distance(s, t, quiet=True):
     return M[-1][-1]
 
 
-
 def edit(fasta_file, quiet=True):
 
     """
@@ -2409,12 +2408,12 @@ def EX_occurences(input_file, n=int, s=str, gc=float):
     Returns a list of length M where M[i] is the expected number of
     occurences of s in a DNA string of length n constructed with given
     GC-content gc[i].
-    If you only want the result of once such case, set input_file = None
+    If you only want the result of once such case, pass input_file as None
     and use the keywords.
     """
 
     if not input_file:
-        return (n - len(s) - 1) * string_prob(s, gc)
+        return (n - (len(s) - 1)) * string_prob(s, gc)
     else:
         with open(input_file, 'r') as f:
             f = f.readlines()[:3]
@@ -2431,7 +2430,95 @@ def EX_occurences(input_file, n=int, s=str, gc=float):
     return P
 
 
+def motzkin_matchings(fasta_file):
 
+    """
+    fasta_file -> A fasta-formatted file containing an RNA string or, simply,
+                  an RNA string.
+
+    Returns the total number of noncrossing matchings of basepair edges
+    in the bonding graph of the given RNA string, modulo 1,000,000.
+    """
+
+    try:
+        if os.path.isfile(fasta_file):
+            rna = fasta_read(fasta_file)[0][1]
+        else:
+            rna = fasta_file.upper()
+    except:
+        raise ValueError("Invalid input.\n{}"
+                         .format(motzkin_matchings.__doc__))
+
+
+    bondings = {'A':'U', 'U':'A', 'G':'C', 'C':'G'}
+    memo = {}
+
+    def rec_motz(rna):
+        'Recursively counts noncrossing matchings of rna.'
+
+        if len(rna) <= 1:
+            return 1
+        elif rna in memo:
+            return memo[rna]
+
+        parts = []
+        for i in range(1, len(rna)):
+            if bondings[rna[0]] == rna[i]:
+                parts += [(rna[1:i], rna[i+1:])]
+
+        partsum = sum(rec_motz(part[0]) * rec_motz(part[1]) for part in parts)
+        memo[rna] = partsum + rec_motz(rna[1:])
+        return memo[rna]
+
+    return rec_motz(rna) % int(1E6)
+
+
+
+def scsp(input_file):
+
+    """
+    input file -> A file containing to strings formatted as follows:
+
+                      string_s
+                      string_t
+
+    Returns the shortest common supersequence of s and t.
+    """
+
+    try:
+        if os.path.isfile(input_file):
+            with open(input_file, 'r') as f:
+                f = [i.strip() for i in f.readlines() if i not in ['', ' ']]
+                s, t = f[0], f[1]
+        else:
+            s, t = input_file[0], input_file[1]
+    except:
+        return ValueError("Invalid input.\n{}".format(scsp.__doc__))
+
+    print('s = {}\nt = {}'.format(s, t))
+    lcs = LCS([s, t], indexed=True)
+    print(lcs)
+
+    spsc = ''
+    pos0 = [0, 0]
+    for i in range(len(lcs)):
+        print('cur spscs = {}'.format(spsc))
+        if i == len(lcs) - 1:
+            spsc += s[lcs[-1][1][0]:] + t[lcs[-1][1][1]]
+        pos1 = [lcs[i][1][0], lcs[i][1][1]]
+        spsc += s[pos0[0]:pos1[0]] + t[pos0[1]:pos1[1]]
+        spsc += lcs[i][0]
+        pos0 = pos1
+        print('pos0 = {}'.format(pos0))
+        print('pos1 = {}'.format(pos1))
+
+
+
+    print(spsc)
+
+
+
+print(scsp('scsp.txt'))
 
 ###################################
 ############ To Do ################
@@ -2443,6 +2530,5 @@ def EX_occurences(input_file, n=int, s=str, gc=float):
 ##  Do the same with scipy.comb.
 ##
 ##  Optimize, refactor, etc.
-##
 ##
 ###################################
