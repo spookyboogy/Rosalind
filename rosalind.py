@@ -2454,7 +2454,7 @@ def motzkin_matchings(fasta_file):
     memo = {}
 
     def rec_motz(rna):
-        'Recursively counts noncrossing matchings of rna.'
+        'Recursively counts all noncrossing matchings of rna.'
 
         if len(rna) <= 1:
             return 1
@@ -2483,42 +2483,47 @@ def scsp(input_file):
                       string_t
 
     Returns the shortest common supersequence of s and t.
+    If an input file is given, output is written to 'output_<input_file>'.
     """
 
     try:
         if os.path.isfile(input_file):
+            f_out = True
             with open(input_file, 'r') as f:
                 f = [i.strip() for i in f.readlines() if i not in ['', ' ']]
                 s, t = f[0], f[1]
         else:
+            f_out = False
             s, t = input_file[0], input_file[1]
     except:
-        return ValueError("Invalid input.\n{}".format(scsp.__doc__))
+        raise ValueError("Invalid input.\n{}".format(scsp.__doc__))
 
-    print('s = {}\nt = {}'.format(s, t))
     lcs = LCS([s, t], indexed=True)
-    print(lcs)
 
-    spsc = ''
-    pos0 = [0, 0]
+    spsq = ''
+    pos0 = (0, 0)
     for i in range(len(lcs)):
-        print('cur spscs = {}'.format(spsc))
-        if i == len(lcs) - 1:
-            spsc += s[lcs[-1][1][0]:] + t[lcs[-1][1][1]]
-        pos1 = [lcs[i][1][0], lcs[i][1][1]]
-        spsc += s[pos0[0]:pos1[0]] + t[pos0[1]:pos1[1]]
-        spsc += lcs[i][0]
-        pos0 = pos1
-        print('pos0 = {}'.format(pos0))
-        print('pos1 = {}'.format(pos1))
+
+        pos1 = (lcs[i][1][0], lcs[i][1][1])
+        s_block = s[pos0[0]:pos1[0]]
+        t_block = t[pos0[1]:pos1[1]]
+
+        spsq += s_block + t_block
+        spsq += lcs[i][0]
+
+        pos0 = (pos1[0] + 1, pos1[1] + 1)
+
+    spsq += s[lcs[-1][1][0] + 1:] + t[lcs[-1][1][1] + 1:]
+
+    if f_out:
+        with open('output_{}'.format(input_file), 'w') as fout:
+            fout.write(spsq)
+    return spsq
+
+print(scsp('rosalind_scsp.txt'))
 
 
 
-    print(spsc)
-
-
-
-print(scsp('scsp.txt'))
 
 ###################################
 ############ To Do ################
