@@ -2520,9 +2520,51 @@ def scsp(input_file):
             fout.write(spsq)
     return spsq
 
-print(scsp('rosalind_scsp.txt'))
+
+def set_operations(input_file, quiet=True):
+
+    """
+    input_file -> A file containing a positive integer n and two subsets
+                  A and B of {1, 2, ... n}, formatted as follows:
+
+                      n
+                      {A}
+                      {B}
+
+    Returns A ∪ B, A ∩ B, A - B, B - A, A¬ and B¬ where the compliments are
+    based off of {1, 2, ... n}.
+    Output is written to 'output_<input_file>' and printed if quiet = False.
+    """
+
+    if type(input_file) == str:
+        if os.path.isfile(input_file):
+            f = open(input_file, 'r').readlines()
+            f = [i.strip('\n') for i in f]
+            n = int(f[0])
+            A = [i for i in sorted(eval(f[1]))]
+            B = [i for i in sorted(eval(f[2]))]
+    else:
+        raise ValueError("Invalid input...\n{}".format(set_operations.__doc__))
+
+    union = sorted(list(set(A + B)))
+    intersection = [i for i in A if i in B]
+    difA = [i for i in A if i not in B]
+    difB = [i for i in B if i not in A]
+    Ac = [i for i in range(1, n + 1) if i not in A]
+    Bc = [i for i in range(1, n + 1) if i not in B]
+
+    with open('output_{}'.format(input_file), 'w') as fout:
+        for i in [union, intersection, difA, difB, Ac, Bc]:
+            fout.write('{')
+            fout.write(', '.join(str(i[j]) for j in range(len(i) - 1)))
+            fout.write(', ' + str(i[-1]) + '}\n')
+            if not quiet:
+                print('{', end='')
+                print(', '.join(str(i[j]) for j in range(len(i)-1)), end=', ')
+                print(str(i[-1]) + '}')
 
 
+set_operations('rosalind_seto.txt')
 
 
 ###################################
