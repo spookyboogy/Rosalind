@@ -115,7 +115,7 @@ def dna_to_rna(dna_string):
     return r
 
 
-def reverse_compliment(dna_string):
+def reverse_complement(dna_string):
 
     """
     Returns the reverse complement of a string of DNA nucleotides.
@@ -765,7 +765,7 @@ def reading_frames(dna_string, simple = True):
         d = dna_string.upper()
 
     reading_frames = []
-    d_c = reverse_compliment(d)
+    d_c = reverse_complement(d)
 
     for s in [d, d_c]:
         frames = []
@@ -933,7 +933,7 @@ def reverse_palindromes(dna_string, zero_based=True):
         for testlen in range(4, 13, 2):
             a = d[i : i + testlen]
             if len(a) >= testlen:
-                b = reverse_compliment(a)
+                b = reverse_complement(a)
                 if a == b:
                     if zero_based:
                         pals += [(i, testlen)]
@@ -1713,7 +1713,7 @@ def corr(fasta_file):
     corrections, correct_reads, incorrect_reads = [], [], []
 
     for i in reads:
-        if reads.count(i) + reads.count(reverse_compliment(i)) > 1:
+        if reads.count(i) + reads.count(reverse_complement(i)) > 1:
             if i not in correct_reads:
                 correct_reads += [i]
         else:
@@ -1723,8 +1723,8 @@ def corr(fasta_file):
         for j in correct_reads:
             if hamm(i,j) == 1:
                 corrections += [(i, j)]
-            elif hamm(i, reverse_compliment(j)) == 1:
-                corrections += [(i, reverse_compliment(j))]
+            elif hamm(i, reverse_complement(j)) == 1:
+                corrections += [(i, reverse_complement(j))]
 
     with open('output_{}'.format(fasta_file), 'w') as fout:
         for i in set(corrections):
@@ -1896,7 +1896,7 @@ def sizeof_powerset(n):
     return (2 ** n) % int(1E6)
 
 
-def reversal_distance(seq_file):
+def reversal_distance(seq_file, sortfirst=False):
 
     """
     seq_file -> A file containing eqaul-length sequence pairs formatted
@@ -1910,16 +1910,30 @@ def reversal_distance(seq_file):
 
     Returns the reversal distances of each seqeuence pair.
     Output is written to 'output_<seq_file>'.
+
+    If sortfirst = True, only the first pair is considered and the output is
+    returned and written to the output file as follows:
+
+        n
+        i0 i1
+        i2 i3
+        ...
+
+    where n is the reversal distance and the i-pairs are reversal indices
+    which result in the reversal sort.
     """
 
     if os.path.isfile(seq_file):
         f = open(seq_file).readlines()
         f = [i.strip('\n').split() for i in f if i not in ['', '\n']]
         f = [[int(i) for i in j] for j in f]
-        pairs = [(f[i], f[i+1]) for i in range(0, len(f), 2)]
+        if not sortfirst:
+            pairs = [(f[i], f[i+1]) for i in range(0, len(f), 2)]
+        else:
+            pairs = [(f[0], f[1])]
     else:
         raise ValueError('Argument must be a valid file.\n{}'
-                            .format(reversal_distance.__doc__))
+                         .format(reversal_distance.__doc__))
 
 
     def breakpoints(a):
@@ -1948,7 +1962,7 @@ def reversal_distance(seq_file):
         return [a[i-1] for i in b]
 
 
-    def rev_dist(a, b):
+    def rev_dist(a, b, sortfirst=sortfirst):
         """
         Greedy breakpoint sort algorithm for finding reversal distance.
         Finding the reversal distance between a and b is the same as finding
@@ -2018,6 +2032,18 @@ def reversal_distance(seq_file):
         for distance in distances:
             fout.write('{} '.format(distance))
     return distances
+
+
+def reversal_sort(input_file):
+
+    """
+    pass
+    """
+
+    return reversal_distance(input_file, sortfirst=True)
+
+
+reversal_sort('sort.txt')
 
 
 def rstr(input_file):
@@ -2531,7 +2557,7 @@ def set_operations(input_file, quiet=True):
                       {A}
                       {B}
 
-    Returns A ∪ B, A ∩ B, A - B, B - A, A¬ and B¬ where the compliments are
+    Returns A ∪ B, A ∩ B, A - B, B - A, A¬ and B¬ where the complements are
     based off of {1, 2, ... n}.
     Output is written to 'output_<input_file>' and printed if quiet = False.
     """
@@ -2555,8 +2581,7 @@ def set_operations(input_file, quiet=True):
 
     with open('output_{}'.format(input_file), 'w') as fout:
         for i in [union, intersection, difA, difB, Ac, Bc]:
-            fout.write('{')
-            fout.write(', '.join(str(i[j]) for j in range(len(i) - 1)))
+            fout.write('{' + ', '.join(str(i[j]) for j in range(len(i) - 1)))
             fout.write(', ' + str(i[-1]) + '}\n')
             if not quiet:
                 print('{', end='')
@@ -2564,7 +2589,46 @@ def set_operations(input_file, quiet=True):
                 print(str(i[-1]) + '}')
 
 
-set_operations('rosalind_seto.txt')
+def de_bruijn(input_file):
+
+    """
+    input_file -> A file containing DNA strings of equal length (not exceeding
+                  50 bp) separated by newlines corresponding to a set
+                  S of (k+1)-mers of some genetic string.
+
+    Returns the adjacency list as a set of tuples corrseponding to the de
+    Bruijn graph of S ∪ Src where Src is the set of the reverse complements
+    of S.
+
+    De Bruijn graph Bk of order k, a digraph on S ∪ Src is defined as follows:
+
+        - The nodes of Bk correspond to all k-mers that are present as a
+          substring of a (k+1)-mer from S ∪ Src.
+        - The edges of Bk are enconded by the (k+1)-mers of S ∪ Src such that
+          for each (k+1)-mer r in S ∪ Src, the directed edge
+          (r[0:k-1], r[1:k]) is formed.
+
+    Output is written to 'output_<input_file>' as the directed edges (tuples)
+    of the  De Bruijn graph, separated by newlines.
+    """
+
+    try:
+        with open(input_file, 'r') as f:
+            data = [i.strip() for i in f.readlines() if i not in ['\n', '']]
+            data = list(set(data))
+    except:
+        raise ValueError("Invalid input.\n{}".format(de_bruijn.__doc__))
+
+    data += list(set([reverse_complement(i) for i in data]))
+    B = [(r[:-1], r[1:]) for r in data]
+
+    with open('output_{}'.format(input_file), 'w') as fout:
+        fout.write('\n'.join('({}, {})'.format(i[0], i[1]) for i in B))
+    return B
+
+
+
+
 
 
 ###################################
