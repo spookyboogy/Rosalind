@@ -2043,9 +2043,6 @@ def reversal_sort(input_file):
     return reversal_distance(input_file, sortfirst=True)
 
 
-reversal_sort('sort.txt')
-
-
 def rstr(input_file):
 
     """
